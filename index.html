@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Archive</title>
     <style>
-        /* 기존 스타일 유지 */
+        /* 기존 기본 스타일 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -33,17 +33,23 @@
         .page-content { display: none; }
         .page-content.active { display: block; }
 
-        /* 게시글 카드 */
+        /* 게시글 및 일정 카드 */
         .content-card { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); margin-bottom: 1.5rem; position: relative; }
         .content-card h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #212529; padding-right: 6rem; }
         .content-card .date { font-size: 0.85rem; color: #adb5bd; margin-bottom: 1rem; }
         .content-card p { color: #495057; white-space: pre-wrap; }
+        
+        /* 일정 카드 전용 스타일 */
+        .schedule-card { border-left: 5px solid #fcc419 !important; padding: 1.2rem 2rem; margin-bottom: 1rem; background: #fff; border-radius: 12px; border: 1px solid #e9ecef; position: relative;}
+        .schedule-card h4 { font-size: 1.1rem; color: #333; padding-right: 4rem; }
+
         .admin-actions { display: none; position: absolute; top: 1.5rem; right: 1.5rem; gap: 0.8rem; }
         .edit-btn { background: none; border: none; color: #228be6; cursor: pointer; font-weight: 600; }
         .delete-btn { background: none; border: none; color: #fa5252; cursor: pointer; font-weight: 600; }
+        .schedule-delete-btn { display: none; position: absolute; top: 1.2rem; right: 1.5rem; background: none; border: none; color: #fa5252; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
 
-        /* 글쓰기 폼 */
-        .write-box { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; }
+        /* 글쓰기 및 일정 추가 박스 */
+        .write-box { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; margin-bottom: 1.5rem; }
         #form-title { margin-bottom: 1.5rem; color: #228be6; font-size: 1.5rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem; font-family: inherit; }
@@ -52,7 +58,14 @@
         .submit-btn { background-color: #228be6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; flex: 1; }
         .cancel-btn { background-color: #e9ecef; color: #495057; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: none; }
 
-        /* 💡 캘린더 전용 스타일 CSS */
+        /* 페이지네이션 디자인 스타일 */
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 0.3rem; margin: 2rem 0; }
+        .page-btn { background: #ffffff; border: 1px solid #dee2e6; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-weight: 600; color: #495057; transition: all 0.2s; }
+        .page-btn:hover { background: #f1f3f5; }
+        .page-btn.active { background: #228be6; color: white; border-color: #228be6; }
+        .page-btn:disabled { background: #e9ecef; color: #adb5bd; cursor: not-allowed; border-color: #dee2e6; }
+
+        /* 캘린더 디자인 */
         .calendar-wrapper { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); margin-bottom: 2rem; }
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
         .calendar-header h3 { font-size: 1.3rem; color: #111; }
@@ -61,20 +74,21 @@
         
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 0.5rem; }
         .day-label { font-weight: 600; color: #868e96; padding-bottom: 0.5rem; border-bottom: 1px solid #e9ecef; }
-        .calendar-day { padding: 0.8rem 0; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500; color: #495057; }
+        .calendar-day { padding: 1rem 0 1.2rem 0; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500; color: #495057; }
         .calendar-day:hover { background-color: #f1f3f5; }
         .calendar-day.empty { cursor: default; background: none; }
         .calendar-day.empty:hover { background: none; }
         
-        /* 💡 글이 있는 날짜 표시 포인트 (동그라미 잔디 심기) */
-        .calendar-day.has-post::after {
-            content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
-            width: 6px; height: 6px; background-color: #228be6; border-radius: 50%;
-        }
-        /* 선택된 날짜 하이라이트 */
+        /* 복수 점 표시 시스템 (글=파랑, 일정=노랑) */
+        .dots-container { display: flex; justify-content: center; gap: 3px; position: absolute; bottom: 6px; left: 0; right: 0; }
+        .dot { width: 5px; height: 5px; border-radius: 50%; }
+        .dot.post { background-color: #228be6; }
+        .dot.schedule { background-color: #fcc419; }
+        
         .calendar-day.selected { background-color: #228be6 !important; color: white !important; }
-        .calendar-day.selected::after { background-color: white; }
+        .calendar-day.selected .dot.post { background-color: white; }
 
+        .section-title { font-size: 1.2rem; margin: 1.5rem 0 0.8rem 0; color: #495057; font-weight: 700; }
         footer { background-color: #ffffff; border-top: 1px solid #e9ecef; padding: 1.5rem 1rem; text-align: center; margin-top: auto; }
         footer p { color: #868e96; font-size: 0.85rem; }
     </style>
@@ -88,7 +102,7 @@
     <header>
         <div class="header-container">
             <h1>MY ARCHIVE</h1>
-            <p>생각, 공부, 그리고 일상의 기록들을 모아두는 공간</p>
+            <p>생각, 공부, 그리고 일상의 기록들을 모아두는 공간입니다.</p>
         </div>
     </header>
 
@@ -103,26 +117,35 @@
     <main>
         <section id="page-home" class="page-content active">
             <div id="posts-container">로딩 중...</div>
+            <div id="pagination-container" class="pagination-container"></div>
         </section>
 
         <section id="page-calendar" class="page-content">
             <div class="calendar-wrapper">
                 <div class="calendar-header">
                     <button class="calendar-btn" onclick="changeMonth(-1)">◀</button>
-                    <h3 id="calendar-month-year">2026년 5월</h3>
+                    <h3 id="calendar-month-year">2026년 6월</h3>
                     <button class="calendar-btn" onclick="changeMonth(1)">▶</button>
                 </div>
-                <div class="calendar-grid" id="calendar-grid">
-                    </div>
+                <div class="calendar-grid" id="calendar-grid"></div>
             </div>
-            <div id="calendar-posts-container">
-                <p style="text-align:center; color:#868e96; padding: 2rem; background: #fff; border-radius: 12px; border:1px solid #e9ecef;">날짜를 선택하면 그날 쓴 기록들이 여기에 나타납니다</p>
+
+            <div id="admin-schedule-zone" class="write-box" style="display: none;">
+                <h3 id="schedule-form-title">📅 [날짜 선택] 일정 추가하기 (관리자)</h3>
+                <form onsubmit="saveSchedule(event)" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <input type="text" id="schedule-input" placeholder="새로운 일정을 입력하신 후 추가 버튼을 클릭해 주세요." required style="flex: 1; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem;">
+                    <button type="submit" style="background: #fcc419; color: #111; border: none; padding: 0 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer;">추가</button>
+                </form>
+            </div>
+
+            <div id="calendar-details-container">
+                <p style="text-align:center; color:#868e96; padding: 2rem; background: #fff; border-radius: 12px; border:1px solid #e9ecef;">날짜를 선택하시면 그날의 기록과 일정이 여기에 나타납니다.</p>
             </div>
         </section>
 
         <section id="page-write" class="page-content">
             <div class="write-box">
-                <h3 id="form-title">새로운 기록 남기기</h3>
+                <h3 id="form-title">📝 새로운 기록 남기기 (관리자)</h3>
                 <form id="write-form" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <input type="text" id="post-title" placeholder="제목을 입력하세요" required>
@@ -141,7 +164,7 @@
         <section id="page-about" class="page-content">
             <div class="content-card">
                 <h2>About This Space</h2>
-                <p>여기는 나만의 개인 아카이브 공간이야.</p>
+                <p>여기는 저만의 개인 아카이브 공간입니다.</p>
             </div>
         </section>
     </main>
@@ -168,10 +191,13 @@
         const ADMIN_GMAIL = "khm14978@gmail.com"; 
         let currentEditId = null;
         
-        // 💡 캘린더 전용 상태값 변수
         let currentDate = new Date(); 
-        let allPosts = []; // 파이어베이스에서 실시간으로 긁어온 전체 글 보관용 테이블
-        let selectedDateString = null; // 현재 사용자가 클릭해서 선택한 날짜 주소
+        let allPosts = []; 
+        let allSchedules = []; 
+        let selectedDateString = null; 
+
+        let currentPage = 1;
+        const postsPerPage = 10; 
 
         function switchTab(tabName) {
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
@@ -183,7 +209,8 @@
             } else if (tabName === 'calendar') {
                 document.getElementById('page-calendar').classList.add('active');
                 document.getElementById('menu-calendar').classList.add('active');
-                renderCalendar(); // 💡 캘린더 탭 열 때 달력 다시 그려주기
+                renderCalendar();
+                if(selectedDateString) selectDate(selectedDateString);
             } else if (tabName === 'write') {
                 document.getElementById('page-write').classList.add('active');
                 document.getElementById('menu-write').classList.add('active');
@@ -197,35 +224,36 @@
         auth.onAuthStateChanged((user) => {
             const authBtn = document.getElementById("auth-btn");
             const menuWrite = document.getElementById("menu-write");
+            const adminScheduleZone = document.getElementById("admin-schedule-zone");
 
             if (user && user.email === ADMIN_GMAIL) {
                 authBtn.innerText = "Logout";
                 menuWrite.style.display = "inline-block";
+                adminScheduleZone.style.display = "block"; 
             } else {
                 authBtn.innerText = "Login";
                 menuWrite.style.display = "none";
+                adminScheduleZone.style.display = "none";  
                 if(document.getElementById('menu-write').classList.contains('active')) switchTab('home');
                 cancelEdit();
             }
-            fetchPostsRealtime(user); // 💡 실시간 데이터 리스너 분리 작동
+            fetchDataRealtime(user);
         });
 
         function handleAuth() {
             if (auth.currentUser) {
-                auth.signOut().then(() => alert("로그아웃 되었습니다"));
+                auth.signOut().then(() => alert("로그아웃 되었습니다."));
             } else {
                 const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider)
-                    .then((result) => {
-                        if (result.user.email !== ADMIN_GMAIL) {
-                            alert("관리자 권한이 없는 계정이야!");
-                            auth.signOut();
-                        }
-                    }).catch((err) => alert("로그인 에러: " + err.message));
+                auth.signInWithPopup(provider).then((result) => {
+                    if (result.user.email !== ADMIN_GMAIL) { 
+                        auth.signOut(); 
+                        alert("관리자 권한이 없는 계정입니다."); 
+                    }
+                }).catch((err) => alert("로그인 중 오류가 발생했습니다: " + err.message));
             }
         }
 
-        // 💡 파이어베이스 저장 날짜 포맷팅 통일 (정밀 비교용)
         function makeDateString(dateObj) {
             return `${dateObj.getFullYear()}. ${dateObj.getMonth() + 1}. ${dateObj.getDate()}.`;
         }
@@ -237,16 +265,48 @@
             
             if (currentEditId) {
                 db.collection("posts").doc(currentEditId).update({ title, content })
-                .then(() => { alert("수정 완료!"); cancelEdit(); switchTab('home'); });
+                .then(() => { alert("수정 완료되었습니다!"); cancelEdit(); switchTab('home'); })
+                .catch(err => alert("수정 실패: " + err.message));
             } else {
-                // 저장 포맷: "2026. 6. 1." 형태로 문자열 가공
                 const dateStr = makeDateString(new Date());
-
                 db.collection("posts").add({
                     title: title, content: content, date: dateStr,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 })
-                .then(() => { document.getElementById("write-form").reset(); switchTab('home'); });
+                .then(() => { 
+                    document.getElementById("write-form").reset(); 
+                    currentPage = 1; 
+                    switchTab('home'); 
+                })
+                .catch(err => alert("저장 실패: " + err.message));
+            }
+        }
+
+        function saveSchedule(event) {
+            event.preventDefault();
+            if (!selectedDateString) {
+                alert("달력에서 일정을 추가하실 날짜를 먼저 선택해 주세요!");
+                return;
+            }
+            const scheduleText = document.getElementById("schedule-input").value;
+
+            db.collection("schedules").add({
+                text: scheduleText,
+                date: selectedDateString,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                document.getElementById("schedule-input").value = "";
+                selectDate(selectedDateString); 
+            })
+            .catch(err => alert("일정 저장 실패: " + err.message));
+        }
+
+        function deleteSchedule(id) {
+            if (confirm("이 일정을 삭제하시겠습니까?")) {
+                db.collection("schedules").doc(id).delete()
+                .then(() => selectDate(selectedDateString))
+                .catch(err => alert("일정 삭제 실패: " + err.message));
             }
         }
 
@@ -254,7 +314,7 @@
             currentEditId = id;
             document.getElementById("post-title").value = title;
             document.getElementById("post-content").value = content;
-            document.getElementById("form-title").innerText = "기록 수정하기";
+            document.getElementById("form-title").innerText = "🔧 기록 수정하기 (관리자)";
             document.getElementById("submit-btn").innerText = "수정 완료";
             document.getElementById("cancel-btn").style.display = "inline-block";
             switchTab('write');
@@ -263,23 +323,27 @@
         function cancelEdit() {
             currentEditId = null;
             document.getElementById("write-form").reset();
-            document.getElementById("form-title").innerText = "새로운 기록 남기기";
+            document.getElementById("form-title").innerText = "📝 새로운 기록 남기기 (관리자)";
             document.getElementById("submit-btn").innerText = "기록하기";
             document.getElementById("cancel-btn").style.display = "none";
         }
 
         function deletePost(id) {
-            if (confirm("정말 이 기록을 지울 거야?")) {
-                db.collection("posts").doc(id).delete().then(() => { if(currentEditId === id) cancelEdit(); });
+            if (confirm("정말 이 기록을 삭제하시겠습니까?")) {
+                db.collection("posts").doc(id).delete()
+                .catch(err => alert("삭제 실패: " + err.message));
             }
         }
 
-        // 💡 실시간 파이어베이스 리스너 분리 (데이터가 바뀌면 다이어리 탭과 캘린더 데이터가 동시 갱신됨)
-        function fetchPostsRealtime(user) {
+        function fetchDataRealtime(user) {
             db.collection("posts").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
                 allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
                 renderHomePosts(user);
+                if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
+            });
+
+            db.collection("schedules").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
+                allSchedules = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 if (document.getElementById('page-calendar').classList.contains('active')) {
                     renderCalendar();
                     if(selectedDateString) selectDate(selectedDateString);
@@ -287,18 +351,45 @@
             });
         }
 
-        // 홈 화면 글 리스트 렌더링
         function renderHomePosts(user) {
             const postsContainer = document.getElementById("posts-container");
             if (allPosts.length === 0) {
-                postsContainer.innerHTML = `<section class="content-card"><h2>아직 기록이 없어!</h2></section>`;
+                postsContainer.innerHTML = `<section class="content-card"><h2>아직 등록된 기록이 없습니다.</h2></section>`;
+                document.getElementById("pagination-container").innerHTML = "";
                 return;
             }
+            
             const isAdmin = user !== null && user.email === ADMIN_GMAIL;
-            postsContainer.innerHTML = allPosts.map(post => renderPostCardHTML(post, isAdmin)).join("");
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const paginatedPosts = allPosts.slice(startIndex, endIndex);
+
+            postsContainer.innerHTML = paginatedPosts.map(post => renderPostCardHTML(post, isAdmin)).join("");
+            renderPaginationControls();
         }
 
-        // 공통 카드 HTML 뼈대 생성기
+        function renderPaginationControls() {
+            const container = document.getElementById("pagination-container");
+            const totalPages = Math.ceil(allPosts.length / postsPerPage);
+            container.innerHTML = "";
+
+            if (totalPages <= 1) return; 
+
+            container.innerHTML += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">◀</button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                container.innerHTML += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            container.innerHTML += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">▶</button>`;
+        }
+
+        function changePage(pageNumber) {
+            currentPage = pageNumber;
+            renderHomePosts(auth.currentUser);
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        }
+
         function renderPostCardHTML(post, isAdmin) {
             const safeTitle = post.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
             const safeContent = post.content.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
@@ -315,7 +406,6 @@
             `;
         }
 
-        // 💡 캘린더 엔진 로직 시작
         function renderCalendar() {
             const grid = document.getElementById("calendar-grid");
             const monthYearLabel = document.getElementById("calendar-month-year");
@@ -326,32 +416,32 @@
             monthYearLabel.innerText = `${year}년 ${month + 1}월`;
             grid.innerHTML = "";
 
-            // 요일 탑 레이블 생성
             const weeks = ['일', '월', '화', '수', '목', '금', '토'];
             weeks.forEach(w => grid.innerHTML += `<div class="day-label">${w}</div>`);
 
-            // 이번 달 첫날 정보 및 총 일수 계산
             const firstDayIndex = new Date(year, month, 1).getDay();
             const lastDay = new Date(year, month + 1, 0).getDate();
 
-            // 공백 칸 채우기
             for (let i = 0; i < firstDayIndex; i++) {
                 grid.innerHTML += `<div class="calendar-day empty"></div>`;
             }
 
-            // 진짜 날짜들 채우기
             for (let day = 1; day <= lastDay; day++) {
                 const targetDateStr = `${year}. ${month + 1}. ${day}.`;
                 
-                // 💡 해당 날짜에 작성된 글이 존재하는지 체크 (체크해서 점 찍어줄 목적)
                 const hasPost = allPosts.some(p => p.date === targetDateStr);
-                
+                const hasSchedule = allSchedules.some(s => s.date === targetDateStr);
                 const isSelected = selectedDateString === targetDateStr ? 'selected' : '';
-                const postClass = hasPost ? 'has-post' : '';
+
+                let dotsHTML = '<div class="dots-container">';
+                if (hasPost) dotsHTML += '<div class="dot post"></div>';
+                if (hasSchedule) dotsHTML += '<div class="dot schedule"></div>';
+                dotsHTML += '</div>';
 
                 grid.innerHTML += `
-                    <div class="calendar-day ${isSelected} ${postClass}" onclick="selectDate('${targetDateStr}')">
+                    <div class="calendar-day ${isSelected}" onclick="selectDate('${targetDateStr}')">
                         ${day}
+                        ${dotsHTML}
                     </div>
                 `;
             }
@@ -362,27 +452,40 @@
             renderCalendar();
         }
 
-        // 💡 특정 날짜 클릭 시 작동하는 로직
         function selectDate(dateStr) {
             selectedDateString = dateStr;
-            renderCalendar(); // 달력 선택 클래스 리렌더링
+            renderCalendar(); 
 
-            const calendarPostsContainer = document.getElementById("calendar-posts-container");
-            
-            // 전체 글 중 날짜 문자열이 똑같은 글들만 필터링
+            document.getElementById("schedule-form-title").innerText = `📅 [${dateStr}] 일정 추가하기 (관리자)`;
+
+            const detailsContainer = document.getElementById("calendar-details-container");
             const filteredPosts = allPosts.filter(p => p.date === dateStr);
+            const filteredSchedules = allSchedules.filter(s => s.date === dateStr);
+            
             const isAdmin = auth.currentUser !== null && auth.currentUser.email === ADMIN_GMAIL;
 
-            if (filteredPosts.length === 0) {
-                calendarPostsContainer.innerHTML = `
-                    <p style="text-align:center; color:#868e96; padding: 2rem; background: #fff; border-radius: 12px; border:1px solid #e9ecef;">
-                        ${dateStr} 에는 작성된 기록이 없습니다
-                    </p>
-                `;
+            let resultHTML = "";
+
+            resultHTML += `<div class="section-title">📌 오늘의 일정 (${filteredSchedules.length})</div>`;
+            if (filteredSchedules.length === 0) {
+                resultHTML += `<p style="color:#868e96; padding: 1rem; text-align:center;">등록된 일정이 없습니다.</p>`;
             } else {
-                // 찾은 글들만 조립해서 아래 띄워주기
-                calendarPostsContainer.innerHTML = filteredPosts.map(post => renderPostCardHTML(post, isAdmin)).join("");
+                resultHTML += filteredSchedules.map(s => `
+                    <div class="schedule-card">
+                        <h4>• ${s.text}</h4>
+                        <button class="schedule-delete-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteSchedule('${s.id}')">지우기</button>
+                    </div>
+                `).join("");
             }
+
+            resultHTML += `<div class="section-title">📝 오늘의 아카이브 기록 (${filteredPosts.length})</div>`;
+            if (filteredPosts.length === 0) {
+                resultHTML += `<p style="color:#868e96; padding: 1rem; text-align:center;">작성한 블로그 글이 없습니다.</p>`;
+            } else {
+                resultHTML += filteredPosts.map(post => renderPostCardHTML(post, isAdmin)).join("");
+            }
+
+            detailsContainer.innerHTML = resultHTML;
         }
     </script>
 </body>
