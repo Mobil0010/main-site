@@ -22,19 +22,11 @@
             min-height: 100vh;
         }
 
-        /* 1. 상단 고정 헤더 */
+        /* 1. 상단 헤더 (큰 제목 영역: 스크롤 시 사라짐) */
         header {
-            background-color: rgba(255, 255, 255, 0.95); /* 살짝 투명하게 해서 뒤에 글씨가 지나가는 느낌을 줌 */
-            backdrop-filter: blur(8px); /* 블러 효과로 스크롤 시 더 세련되게 보임 */
-            border-bottom: 1px solid #e9ecef;
-            padding: 1.5rem 1rem;
+            background-color: #ffffff;
+            padding: 2.5rem 1rem 1.5rem 1rem;
             text-align: center;
-            
-            /* 고정을 위한 핵심 속성 */
-            position: sticky;
-            top: 0;
-            z-index: 1000; /* 본문 내용보다 무조건 위에 보이도록 설정 */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* 고정됐을 때 이질감 없도록 가벼운 그림자 추가 */
         }
 
         .header-container {
@@ -43,28 +35,39 @@
         }
 
         header h1 {
-            font-size: 2rem; /* 고정 헤더니까 크기를 살짝 줄여서 스크롤 시 답답하지 않게 조절 */
+            font-size: 2.5rem;
             color: #111;
             font-weight: 800;
             letter-spacing: -0.05em;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
         }
 
         header p {
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
-        /* 네비게이션 메뉴 */
+        /* 2. 네비게이션 메뉴 (스크롤 시 상단에 고정됨) */
         nav {
-            margin-top: 1rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem;
+            text-align: center;
+            
+            /* 메뉴 고정을 위한 핵심 속성 */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
         }
 
         nav a {
             text-decoration: none;
             color: #495057;
-            font-weight: 500;
-            margin: 0 1rem;
+            font-weight: 600;
+            margin: 0 1.5rem;
+            font-size: 0.95rem;
             transition: color 0.2s;
         }
 
@@ -72,7 +75,7 @@
             color: #228be6;
         }
 
-        /* 2. 메인 내용 영역 */
+        /* 3. 메인 내용 영역 */
         main {
             flex: 1;
             max-width: 800px;
@@ -81,14 +84,13 @@
             padding: 0 1rem;
         }
 
-        /* 스크롤 확인용으로 카드를 여러 개 배치해둠 */
         .content-card {
             background: #ffffff;
             padding: 2rem;
             border-radius: 12px;
             border: 1px solid #e9ecef;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-            margin-bottom: 1.5rem; /* 카드 사이 간격 */
+            margin-bottom: 1.5rem;
         }
 
         main h2 {
@@ -102,7 +104,7 @@
             margin-bottom: 1rem;
         }
 
-        /* 3. 푸터 */
+        /* 4. 푸터 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #e9ecef;
@@ -123,13 +125,14 @@
         <div class="header-container">
             <h1>MY ARCHIVE</h1>
             <p>생각, 공부, 그리고 일상의 기록들을 모아두는 공간</p>
-            <nav>
-                <a href="#">Home</a>
-                <a href="#">Logs</a>
-                <a href="#">About</a>
-            </nav>
         </div>
     </header>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Logs</a>
+        <a href="#">About</a>
+    </nav>
 
     <main>
         <section class="content-card">
