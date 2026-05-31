@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Archive</title>
     <style>
-        /* 기본 스타일 */
+        /* 기존 스타일 유지 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -17,7 +17,6 @@
         header h1 { font-size: 2.5rem; color: #111; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
         header p { color: #6c757d; font-size: 1rem; }
         
-        /* 네비게이션 메뉴 */
         nav {
             background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
             border-bottom: 1px solid #e9ecef; padding: 1rem; text-align: center;
@@ -27,38 +26,55 @@
         }
         nav a, nav button { text-decoration: none; color: #495057; font-weight: 600; font-size: 0.95rem; background: none; border: none; cursor: pointer; transition: color 0.2s; }
         nav a:hover, nav button:hover, nav a.active { color: #228be6; }
-        
         #auth-btn { color: #228be6; border: 1px solid #228be6; padding: 0.3rem 0.8rem; border-radius: 6px; }
         #auth-btn:hover { background-color: #228be6; color: white; }
         
         main { flex: 1; max-width: 800px; width: 100%; margin: 2rem auto; padding: 0 1rem; }
-        
-        /* 💡 페이지 콘텐츠 구역 (기본적으로 숨김 처리용 클래스) */
         .page-content { display: none; }
-        .page-content.active { display: block; } /* active가 붙은 구역만 화면에 보임 */
+        .page-content.active { display: block; }
 
-        /* 글쓰기/수정 폼 래퍼 */
-        .write-box { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); }
-        #form-title { margin-bottom: 1.5rem; color: #228be6; font-size: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 250px; }
-        
-        .btn-group { display: flex; gap: 0.5rem; }
-        .submit-btn { background-color: #228be6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; flex: 1; }
-        .cancel-btn { background-color: #e9ecef; color: #495057; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: none; }
-        
         /* 게시글 카드 */
         .content-card { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); margin-bottom: 1.5rem; position: relative; }
         .content-card h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #212529; padding-right: 6rem; }
         .content-card .date { font-size: 0.85rem; color: #adb5bd; margin-bottom: 1rem; }
         .content-card p { color: #495057; white-space: pre-wrap; }
-        
-        /* 관리자용 버튼 */
         .admin-actions { display: none; position: absolute; top: 1.5rem; right: 1.5rem; gap: 0.8rem; }
         .edit-btn { background: none; border: none; color: #228be6; cursor: pointer; font-weight: 600; }
         .delete-btn { background: none; border: none; color: #fa5252; cursor: pointer; font-weight: 600; }
+
+        /* 글쓰기 폼 */
+        .write-box { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; }
+        #form-title { margin-bottom: 1.5rem; color: #228be6; font-size: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 250px; }
+        .btn-group { display: flex; gap: 0.5rem; }
+        .submit-btn { background-color: #228be6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; flex: 1; }
+        .cancel-btn { background-color: #e9ecef; color: #495057; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: none; }
+
+        /* 💡 캘린더 전용 스타일 CSS */
+        .calendar-wrapper { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); margin-bottom: 2rem; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .calendar-header h3 { font-size: 1.3rem; color: #111; }
+        .calendar-btn { background: #f1f3f5; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .calendar-btn:hover { background: #e9ecef; }
         
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 0.5rem; }
+        .day-label { font-weight: 600; color: #868e96; padding-bottom: 0.5rem; border-bottom: 1px solid #e9ecef; }
+        .calendar-day { padding: 0.8rem 0; border-radius: 8px; cursor: pointer; position: relative; font-weight: 500; color: #495057; }
+        .calendar-day:hover { background-color: #f1f3f5; }
+        .calendar-day.empty { cursor: default; background: none; }
+        .calendar-day.empty:hover { background: none; }
+        
+        /* 💡 글이 있는 날짜 표시 포인트 (동그라미 잔디 심기) */
+        .calendar-day.has-post::after {
+            content: ''; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+            width: 6px; height: 6px; background-color: #228be6; border-radius: 50%;
+        }
+        /* 선택된 날짜 하이라이트 */
+        .calendar-day.selected { background-color: #228be6 !important; color: white !important; }
+        .calendar-day.selected::after { background-color: white; }
+
         footer { background-color: #ffffff; border-top: 1px solid #e9ecef; padding: 1.5rem 1rem; text-align: center; margin-top: auto; }
         footer p { color: #868e96; font-size: 0.85rem; }
     </style>
@@ -78,6 +94,7 @@
 
     <nav>
         <a href="#" id="menu-home" class="nav-link active" onclick="switchTab('home')">Home</a>
+        <a href="#" id="menu-calendar" class="nav-link" onclick="switchTab('calendar')">Calendar</a>
         <a href="#" id="menu-write" class="nav-link" onclick="switchTab('write')" style="display: none;">Write</a>
         <a href="#" id="menu-about" class="nav-link" onclick="switchTab('about')">About</a>
         <button id="auth-btn" onclick="handleAuth()">Login</button>
@@ -88,9 +105,24 @@
             <div id="posts-container">로딩 중...</div>
         </section>
 
+        <section id="page-calendar" class="page-content">
+            <div class="calendar-wrapper">
+                <div class="calendar-header">
+                    <button class="calendar-btn" onclick="changeMonth(-1)">◀</button>
+                    <h3 id="calendar-month-year">2026년 5월</h3>
+                    <button class="calendar-btn" onclick="changeMonth(1)">▶</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    </div>
+            </div>
+            <div id="calendar-posts-container">
+                <p style="text-align:center; color:#868e96; padding: 2rem; background: #fff; border-radius: 12px; border:1px solid #e9ecef;">날짜를 선택하면 그날 쓴 기록들이 여기에 나타납니다</p>
+            </div>
+        </section>
+
         <section id="page-write" class="page-content">
             <div class="write-box">
-                <h3 id="form-title">📝 새로운 기록 남기기 (관리자)</h3>
+                <h3 id="form-title">새로운 기록 남기기</h3>
                 <form id="write-form" onsubmit="handleSubmit(event)">
                     <div class="form-group">
                         <input type="text" id="post-title" placeholder="제목을 입력하세요" required>
@@ -107,27 +139,9 @@
         </section>
 
         <section id="page-about" class="page-content">
-            <div class="about-grid">
-                <div class="profile-zone">
-                    <div class="profile-avatar">👩‍💻</div>
-                </div>
-                
-                <div class="profile-info">
-                    <h2>나만의 기록 보관소</h2>
-                    <p class="bio">
-                        배운 것, 생각한 것, 그리고 좋아하는 것들을 흘려보내지 않고 차곡차곡 모아두는 개인 아카이브 공간입니다. 마주쳤던 개발 에러 로그부터 소소한 일상까지 자유롭게 기록합니다.
-                    </p>
-                    
-                    <div class="tag-container">
-                        <span class="tag">#Rust</span>
-                        <span class="tag">#Python</span>
-                        <span class="tag">#Archive</span>
-                    </div>
-                    
-                    <div class="link-zone">
-                        <a href="https://github.com/Mobil0010" target="_blank">🔗 GitHub 방문하기</a>
-                    </div>
-                </div>
+            <div class="content-card">
+                <h2>About This Space</h2>
+                <p>여기는 나만의 개인 아카이브 공간이야.</p>
             </div>
         </section>
     </main>
@@ -137,7 +151,6 @@
     </footer>
 
     <script>
-        // 파이어베이스 설정값 (네 정보 무조건 입력하기!)
         const firebaseConfig = {
             apiKey: "AIzaSyAdHzOLdhbxNgDNJc1slU-6Qk_gexLnPuc",
             authDomain: "my-archive-site.firebaseapp.com",
@@ -152,21 +165,25 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 관리자 구글 이메일 주소 세팅
         const ADMIN_GMAIL = "khm14978@gmail.com"; 
         let currentEditId = null;
+        
+        // 💡 캘린더 전용 상태값 변수
+        let currentDate = new Date(); 
+        let allPosts = []; // 파이어베이스에서 실시간으로 긁어온 전체 글 보관용 테이블
+        let selectedDateString = null; // 현재 사용자가 클릭해서 선택한 날짜 주소
 
-        // 💡 탭(페이지) 전환 핵심 함수
         function switchTab(tabName) {
-            // 1. 모든 페이지 콘텐츠 숨기기
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
-            // 2. 모든 네비게이션 링크에서 파란색 활성화(active) 클래스 떼기
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
 
-            // 3. 선택한 탭에 맞는 화면 켜고 상단 메뉴 불 들어오게 하기
             if (tabName === 'home') {
                 document.getElementById('page-home').classList.add('active');
                 document.getElementById('menu-home').classList.add('active');
+            } else if (tabName === 'calendar') {
+                document.getElementById('page-calendar').classList.add('active');
+                document.getElementById('menu-calendar').classList.add('active');
+                renderCalendar(); // 💡 캘린더 탭 열 때 달력 다시 그려주기
             } else if (tabName === 'write') {
                 document.getElementById('page-write').classList.add('active');
                 document.getElementById('menu-write').classList.add('active');
@@ -174,30 +191,28 @@
                 document.getElementById('page-about').classList.add('active');
                 document.getElementById('menu-about').classList.add('active');
             }
-            window.scrollTo(0, 0); // 페이지 바뀔 때 스크롤 맨 위로 올리기
+            window.scrollTo(0, 0);
         }
 
-        // 로그인 상태 감시
         auth.onAuthStateChanged((user) => {
             const authBtn = document.getElementById("auth-btn");
             const menuWrite = document.getElementById("menu-write");
 
             if (user && user.email === ADMIN_GMAIL) {
                 authBtn.innerText = "Logout";
-                menuWrite.style.display = "inline-block"; // 💡 로그인 시 상단에 'Write' 탭 생성!
+                menuWrite.style.display = "inline-block";
             } else {
                 authBtn.innerText = "Login";
-                menuWrite.style.display = "none";        // 로그아웃 시 탭 소멸
-                switchTab('home');                        // 안전하게 홈 화면으로 튕겨내기
+                menuWrite.style.display = "none";
+                if(document.getElementById('menu-write').classList.contains('active')) switchTab('home');
                 cancelEdit();
             }
-            renderPosts(user);
+            fetchPostsRealtime(user); // 💡 실시간 데이터 리스너 분리 작동
         });
 
-        // 구글 팝업 로그인 처리
         function handleAuth() {
             if (auth.currentUser) {
-                auth.signOut().then(() => alert("로그아웃 되었어."));
+                auth.signOut().then(() => alert("로그아웃 되었습니다"));
             } else {
                 const provider = new firebase.auth.GoogleAuthProvider();
                 auth.signInWithPopup(provider)
@@ -205,113 +220,169 @@
                         if (result.user.email !== ADMIN_GMAIL) {
                             alert("관리자 권한이 없는 계정이야!");
                             auth.signOut();
-                        } else {
-                            alert("관리자님, 환영합니다!");
                         }
-                    })
-                    .catch((err) => alert("로그인 에러: " + err.message));
+                    }).catch((err) => alert("로그인 에러: " + err.message));
             }
         }
 
-        // 통합 제출 처리 (글 작성/수정 완료 시 메인 탭으로 튕겨주는 로직 탑재)
+        // 💡 파이어베이스 저장 날짜 포맷팅 통일 (정밀 비교용)
+        function makeDateString(dateObj) {
+            return `${dateObj.getFullYear()}. ${dateObj.getMonth() + 1}. ${dateObj.getDate()}.`;
+        }
+
         function handleSubmit(event) {
             event.preventDefault();
-
             const title = document.getElementById("post-title").value;
             const content = document.getElementById("post-content").value;
             
             if (currentEditId) {
-                // 수정 완료 처리
-                db.collection("posts").doc(currentEditId).update({
-                    title: title, content: content
-                })
-                .then(() => {
-                    alert("수정 완료!");
-                    cancelEdit();
-                    switchTab('home'); // 💡 수정이 끝나면 자동으로 홈 화면(글 목록)으로 이동!
-                })
-                .catch(err => alert("수정 실패: " + err.message));
+                db.collection("posts").doc(currentEditId).update({ title, content })
+                .then(() => { alert("수정 완료!"); cancelEdit(); switchTab('home'); });
             } else {
-                // 새 글 작성 처리
-                const date = new Date().toLocaleDateString("ko-KR", {
-                    year: "numeric", month: "long", day: "numeric",
-                    hour: "2-digit", minute: "2-digit"
-                });
+                // 저장 포맷: "2026. 6. 1." 형태로 문자열 가공
+                const dateStr = makeDateString(new Date());
 
                 db.collection("posts").add({
-                    title: title, content: content, date: date,
+                    title: title, content: content, date: dateStr,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 })
-                .then(() => {
-                    document.getElementById("write-form").reset();
-                    switchTab('home'); // 💡 글 쓰기가 완료되면 자동으로 홈 화면으로 이동!
-                })
-                .catch(err => alert("저장 실패: " + err.message));
+                .then(() => { document.getElementById("write-form").reset(); switchTab('home'); });
             }
         }
 
-        // 수정 모드 진입 (수정 버튼 누르면 글쓰기 페이지로 강제 화면 전환)
         function startEdit(id, title, content) {
             currentEditId = id;
-            
             document.getElementById("post-title").value = title;
             document.getElementById("post-content").value = content;
-            
-            document.getElementById("form-title").innerText = "🔧 기록 수정하기 (관리자)";
+            document.getElementById("form-title").innerText = "기록 수정하기";
             document.getElementById("submit-btn").innerText = "수정 완료";
             document.getElementById("cancel-btn").style.display = "inline-block";
-            
-            switchTab('write'); // 💡 메인 화면에서 수정 버튼 누르면 자동으로 'Write' 페이지로 넘어감!
+            switchTab('write');
         }
 
-        // 수정 취소 및 폼 리셋
         function cancelEdit() {
             currentEditId = null;
             document.getElementById("write-form").reset();
-            document.getElementById("form-title").innerText = "📝 새로운 기록 남기기 (관리자)";
+            document.getElementById("form-title").innerText = "새로운 기록 남기기";
             document.getElementById("submit-btn").innerText = "기록하기";
             document.getElementById("cancel-btn").style.display = "none";
-            switchTab('home'); // 취소 누르면 홈으로 복귀
         }
 
-        // 글 삭제
         function deletePost(id) {
             if (confirm("정말 이 기록을 지울 거야?")) {
-                db.collection("posts").doc(id).delete()
-                    .then(() => { if(currentEditId === id) cancelEdit(); })
-                    .catch(err => alert("삭제 실패: " + err.message));
+                db.collection("posts").doc(id).delete().then(() => { if(currentEditId === id) cancelEdit(); });
             }
         }
 
-        // 실시간 글 목록 가져오기
-        function renderPosts(user) {
-            const postsContainer = document.getElementById("posts-container");
-
+        // 💡 실시간 파이어베이스 리스너 분리 (데이터가 바뀌면 다이어리 탭과 캘린더 데이터가 동시 갱신됨)
+        function fetchPostsRealtime(user) {
             db.collection("posts").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
-                if (snapshot.empty) {
-                    postsContainer.innerHTML = `<section class="content-card"><h2>아직 기록이 없어!</h2></section>`;
-                    return;
+                allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                renderHomePosts(user);
+                if (document.getElementById('page-calendar').classList.contains('active')) {
+                    renderCalendar();
+                    if(selectedDateString) selectDate(selectedDateString);
                 }
-
-                const isAdmin = user !== null && user.email === ADMIN_GMAIL;
-                postsContainer.innerHTML = snapshot.docs.map(doc => {
-                    const post = doc.data();
-                    const safeTitle = post.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
-                    const safeContent = post.content.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
-
-                    return `
-                        <section class="content-card">
-                            <h2>${post.title}</h2>
-                            <div class="date">${post.date || '방금 전'}</div>
-                            <p>${post.content}</p>
-                            <div class="admin-actions" style="display: ${isAdmin ? 'flex' : 'none'}">
-                                <button class="edit-btn" onclick="startEdit('${doc.id}', '${safeTitle}', '${safeContent}')">수정</button>
-                                <button class="delete-btn" onclick="deletePost('${doc.id}')">삭제</button>
-                            </div>
-                        </section>
-                    `;
-                }).join("");
             });
+        }
+
+        // 홈 화면 글 리스트 렌더링
+        function renderHomePosts(user) {
+            const postsContainer = document.getElementById("posts-container");
+            if (allPosts.length === 0) {
+                postsContainer.innerHTML = `<section class="content-card"><h2>아직 기록이 없어!</h2></section>`;
+                return;
+            }
+            const isAdmin = user !== null && user.email === ADMIN_GMAIL;
+            postsContainer.innerHTML = allPosts.map(post => renderPostCardHTML(post, isAdmin)).join("");
+        }
+
+        // 공통 카드 HTML 뼈대 생성기
+        function renderPostCardHTML(post, isAdmin) {
+            const safeTitle = post.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
+            const safeContent = post.content.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+            return `
+                <section class="content-card">
+                    <h2>${post.title}</h2>
+                    <div class="date">${post.date || '방금 전'}</div>
+                    <p>${post.content}</p>
+                    <div class="admin-actions" style="display: ${isAdmin ? 'flex' : 'none'}">
+                        <button class="edit-btn" onclick="startEdit('${post.id}', '${safeTitle}', '${safeContent}')">수정</button>
+                        <button class="delete-btn" onclick="deletePost('${post.id}')">삭제</button>
+                    </div>
+                </section>
+            `;
+        }
+
+        // 💡 캘린더 엔진 로직 시작
+        function renderCalendar() {
+            const grid = document.getElementById("calendar-grid");
+            const monthYearLabel = document.getElementById("calendar-month-year");
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            monthYearLabel.innerText = `${year}년 ${month + 1}월`;
+            grid.innerHTML = "";
+
+            // 요일 탑 레이블 생성
+            const weeks = ['일', '월', '화', '수', '목', '금', '토'];
+            weeks.forEach(w => grid.innerHTML += `<div class="day-label">${w}</div>`);
+
+            // 이번 달 첫날 정보 및 총 일수 계산
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const lastDay = new Date(year, month + 1, 0).getDate();
+
+            // 공백 칸 채우기
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="calendar-day empty"></div>`;
+            }
+
+            // 진짜 날짜들 채우기
+            for (let day = 1; day <= lastDay; day++) {
+                const targetDateStr = `${year}. ${month + 1}. ${day}.`;
+                
+                // 💡 해당 날짜에 작성된 글이 존재하는지 체크 (체크해서 점 찍어줄 목적)
+                const hasPost = allPosts.some(p => p.date === targetDateStr);
+                
+                const isSelected = selectedDateString === targetDateStr ? 'selected' : '';
+                const postClass = hasPost ? 'has-post' : '';
+
+                grid.innerHTML += `
+                    <div class="calendar-day ${isSelected} ${postClass}" onclick="selectDate('${targetDateStr}')">
+                        ${day}
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendar();
+        }
+
+        // 💡 특정 날짜 클릭 시 작동하는 로직
+        function selectDate(dateStr) {
+            selectedDateString = dateStr;
+            renderCalendar(); // 달력 선택 클래스 리렌더링
+
+            const calendarPostsContainer = document.getElementById("calendar-posts-container");
+            
+            // 전체 글 중 날짜 문자열이 똑같은 글들만 필터링
+            const filteredPosts = allPosts.filter(p => p.date === dateStr);
+            const isAdmin = auth.currentUser !== null && auth.currentUser.email === ADMIN_GMAIL;
+
+            if (filteredPosts.length === 0) {
+                calendarPostsContainer.innerHTML = `
+                    <p style="text-align:center; color:#868e96; padding: 2rem; background: #fff; border-radius: 12px; border:1px solid #e9ecef;">
+                        ${dateStr} 에는 작성된 기록이 없습니다
+                    </p>
+                `;
+            } else {
+                // 찾은 글들만 조립해서 아래 띄워주기
+                calendarPostsContainer.innerHTML = filteredPosts.map(post => renderPostCardHTML(post, isAdmin)).join("");
+            }
         }
     </script>
 </body>
