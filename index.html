@@ -5,119 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Archive</title>
     <style>
-        /* 기본 스타일 초기화 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* 기본 스타일 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            line-height: 1.6; color: #333; background-color: #f8f9fa;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
-
-        /* 1. 상단 헤더 (큰 제목 영역: 스크롤 시 사라짐) */
-        header {
-            background-color: #ffffff;
-            padding: 2.5rem 1rem 1.5rem 1rem;
-            text-align: center;
-        }
-
-        .header-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            color: #111;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            color: #6c757d;
-            font-size: 1rem;
-        }
-
-        /* 2. 네비게이션 메뉴 (스크롤 시 상단에 고정됨) */
+        header { background-color: #ffffff; padding: 2.5rem 1rem 1.5rem 1rem; text-align: center; }
+        .header-container { max-width: 800px; margin: 0 auto; }
+        header h1 { font-size: 2.5rem; color: #111; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
+        header p { color: #6c757d; font-size: 1rem; }
         nav {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid #e9ecef;
-            padding: 1rem;
-            text-align: center;
-            
-            /* 메뉴 고정을 위한 핵심 속성 */
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
+            border-bottom: 1px solid #e9ecef; padding: 1rem; text-align: center;
+            position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            display: flex; justify-content: center; align-items: center; gap: 1.5rem;
         }
-
-        nav a {
-            text-decoration: none;
-            color: #495057;
-            font-weight: 600;
-            margin: 0 1.5rem;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        nav a:hover {
-            color: #228be6;
-        }
-
-        /* 3. 메인 내용 영역 */
-        main {
-            flex: 1;
-            max-width: 800px;
-            width: 100%;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .content-card {
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-            margin-bottom: 1.5rem;
-        }
-
-        main h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #212529;
-        }
-
-        main p {
-            color: #495057;
-            margin-bottom: 1rem;
-        }
-
-        /* 4. 푸터 */
-        footer {
-            background-color: #ffffff;
-            border-top: 1px solid #e9ecef;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            margin-top: auto;
-        }
-
-        footer p {
-            color: #868e96;
-            font-size: 0.85rem;
-        }
+        nav a, nav button { text-decoration: none; color: #495057; font-weight: 600; font-size: 0.95rem; background: none; border: none; cursor: pointer; transition: color 0.2s; }
+        nav a:hover, nav button:hover { color: #228be6; }
+        #auth-btn { color: #228be6; border: 1px solid #228be6; padding: 0.3rem 0.8rem; border-radius: 6px; }
+        #auth-btn:hover { background-color: #228be6; color: white; }
+        main { flex: 1; max-width: 800px; width: 100%; margin: 2rem auto; padding: 0 1rem; }
+        
+        /* 글쓰기/수정 폼 */
+        #write-section { display: none; background: #ffffff; padding: 2rem; border-radius: 12px; border: 2px solid #228be6; margin-bottom: 2rem; }
+        #form-title { margin-bottom: 1rem; color: #228be6; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+        .form-group textarea { resize: vertical; min-height: 150px; }
+        
+        .btn-group { display: flex; gap: 0.5rem; }
+        .submit-btn { background-color: #228be6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; flex: 1; }
+        .cancel-btn { background-color: #e9ecef; color: #495057; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: none; }
+        
+        /* 게시글 카드 */
+        .content-card { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); margin-bottom: 1.5rem; position: relative; }
+        .content-card h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #212529; padding-right: 6rem; }
+        .content-card .date { font-size: 0.85rem; color: #adb5bd; margin-bottom: 1rem; }
+        .content-card p { color: #495057; white-space: pre-wrap; }
+        
+        /* 관리자용 버튼 레이아웃 */
+        .admin-actions { display: none; position: absolute; top: 1.5rem; right: 1.5rem; gap: 0.8rem; }
+        .edit-btn { background: none; border: none; color: #228be6; cursor: pointer; font-weight: 600; }
+        .delete-btn { background: none; border: none; color: #fa5252; cursor: pointer; font-weight: 600; }
+        
+        footer { background-color: #ffffff; border-top: 1px solid #e9ecef; padding: 1.5rem 1rem; text-align: center; margin-top: auto; }
+        footer p { color: #868e96; font-size: 0.85rem; }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -132,36 +72,189 @@
         <a href="#">Home</a>
         <a href="#">Logs</a>
         <a href="#">About</a>
+        <button id="auth-btn" onclick="handleAuth()">Login</button>
     </nav>
 
     <main>
-        <section class="content-card">
-            <h2>오늘의 기록</h2>
+        <section id="write-section">
+            <h3 id="form-title">📝 새로운 기록 남기기 (관리자)</h3>
+            <form id="write-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <input type="text" id="post-title" placeholder="제목을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <textarea id="post-content" placeholder="오늘 어떤 일이 있었나요? 자유롭게 기록해보세요." required></textarea>
+                </div>
+                <div class="btn-group">
+                    <button type="submit" id="submit-btn" class="submit-btn">기록하기</button>
+                    <button type="button" id="cancel-btn" class="cancel-btn" onclick="cancelEdit()">수정 취소</button>
+                </div>
+            </form>
         </section>
 
-        <section class="content-card">
-            <h2>스크롤 테스트용 카드 1</h2>
-        </section>
-
-        <section class="content-card">
-            <h2>스크롤 테스트용 카드 2</h2>
-        </section>
-
-        <section class="content-card">
-            <h2>스크롤 테스트용 카드 3</h2>
-        </section>
-        <section class="content-card">
-            <h2>스크롤 테스트용 카드 4</h2>
-        </section>
-        
-        <section class="content-card">
-            <h2>스크롤 테스트용 카드 5</h2>
-        </section>
+        <div id="posts-container">로딩 중...</div>
     </main>
 
     <footer>
         <p>&copy; 2026 My Archive. All rights reserved.</p>
     </footer>
 
+    <script>
+        // 파이어베이스 설정값 (네 정보 입력하기!)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdHzOLdhbxNgDNJc1slU-6Qk_gexLnPuc",
+            authDomain: "my-archive-site.firebaseapp.com",
+            projectId: "my-archive-site",
+            storageBucket: "my-archive-site.firebasestorage.app",
+            messagingSenderId: "126546847663",
+            appId: "1:126546847663:web:5cca4dec8c37735779315a",
+            measurementId: "G-THNYCMQNKD"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 💡 핵심: 현재 수정 중인 글의 ID를 저장하는 변수 (null이면 새 글 쓰기 모드)
+        let currentEditId = null;
+
+        // 로그인 상태 감시
+        auth.onAuthStateChanged((user) => {
+            const authBtn = document.getElementById("auth-btn");
+            const writeSection = document.getElementById("write-section");
+
+            if (user) {
+                authBtn.innerText = "Logout";
+                writeSection.style.display = "block";
+            } else {
+                authBtn.innerText = "Login";
+                writeSection.style.display = "none";
+                cancelEdit(); // 로그아웃되면 수정 모드도 리셋
+            }
+            renderPosts(user);
+        });
+
+        // 로그인 / 로그아웃 처리
+        function handleAuth() {
+            if (auth.currentUser) {
+                auth.signOut().then(() => alert("로그아웃 되었어."));
+            } else {
+                const email = prompt("관리자 이메일:");
+                const password = prompt("비밀번호:");
+                if (email && password) {
+                    auth.signInWithEmailAndPassword(email, password)
+                        .then(() => alert("로그인 성공!"))
+                        .catch((error) => alert("에러: " + error.message));
+                }
+            }
+        }
+
+        // 💡 통합 제출 처리 (새 글 저장 또는 기존 글 수정)
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById("post-title").value;
+            const content = document.getElementById("post-content").value;
+            
+            if (currentEditId) {
+                // [UPDATE] 수정 모드일 때
+                db.collection("posts").doc(currentEditId).update({
+                    title: title,
+                    content: content
+                })
+                .then(() => {
+                    alert("성공적으로 수정되었어!");
+                    cancelEdit(); // 폼 초기화 및 일반 모드 복귀
+                })
+                .catch(err => alert("수정 실패: " + err.message));
+
+            } else {
+                // [CREATE] 새 글 쓰기 모드일 때
+                const date = new Date().toLocaleDateString("ko-KR", {
+                    year: "numeric", month: "long", day: "numeric",
+                    hour: "2-digit", minute: "2-digit"
+                });
+
+                db.collection("posts").add({
+                    title: title,
+                    content: content,
+                    date: date,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .then(() => {
+                    document.getElementById("write-form").reset();
+                })
+                .catch(err => alert("저장 실패: " + err.message));
+            }
+        }
+
+        // 💡 수정 모드 활성화 함수
+        // 수정 버튼을 누르면 해당 카드의 데이터가 폼 안으로 쏙 들어가고 폼 스타일이 바뀜
+        function startEdit(id, title, content) {
+            currentEditId = id; // 수정할 글 ID 고정
+            
+            document.getElementById("post-title").value = title;
+            document.getElementById("post-content").value = content;
+            
+            document.getElementById("form-title").innerText = "🔧 기록 수정하기 (관리자)";
+            document.getElementById("submit-btn").innerText = "수정 완료";
+            document.getElementById("cancel-btn").style.display = "inline-block";
+            
+            // 수정하기 편하게 화면을 맨 위(작성 폼)로 부드럽게 올려줌
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 수정 취소 및 폼 리셋
+        function cancelEdit() {
+            currentEditId = null;
+            document.getElementById("write-form").reset();
+            document.getElementById("form-title").innerText = "📝 새로운 기록 남기기 (관리자)";
+            document.getElementById("submit-btn").innerText = "기록하기";
+            document.getElementById("cancel-btn").style.display = "none";
+        }
+
+        // [DELETE] 글 삭제
+        function deletePost(id) {
+            if (confirm("정말 이 기록을 지울 거야?")) {
+                db.collection("posts").doc(id).delete()
+                    .then(() => {
+                        if(currentEditId === id) cancelEdit(); // 수정하던 글을 삭제하면 폼도 리셋
+                    })
+                    .catch(err => alert("삭제 실패: " + err.message));
+            }
+        }
+
+        // [READ] 실시간 글 목록 가져오기
+        function renderPosts(user) {
+            const postsContainer = document.getElementById("posts-container");
+
+            db.collection("posts").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    postsContainer.innerHTML = `<section class="content-card"><h2>아직 기록이 없어!</h2></section>`;
+                    return;
+                }
+
+                const isAdmin = user !== null;
+                postsContainer.innerHTML = snapshot.docs.map(doc => {
+                    const post = doc.data();
+                    // 자바스크립트 템플릿 리터럴 문법 오류를 막기 위해 줄바꿈 및 따옴표 치환 처리
+                    const safeTitle = post.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    const safeContent = post.content.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+
+                    return `
+                        <section class="content-card">
+                            <h2>${post.title}</h2>
+                            <div class="date">${post.date || '방금 전'}</div>
+                            <p>${post.content}</p>
+                            <div class="admin-actions" style="display: ${isAdmin ? 'flex' : 'none'}">
+                                <button class="edit-btn" onclick="startEdit('${doc.id}', '${safeTitle}', '${safeContent}')">수정</button>
+                                <button class="delete-btn" onclick="deletePost('${doc.id}')">삭제</button>
+                            </div>
+                        </section>
+                    `;
+                }).join("");
+            });
+        }
+    </script>
 </body>
 </html>
