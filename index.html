@@ -174,6 +174,11 @@
     </footer>
 
     <script>
+        // 날짜 포맷 함수 윗부분으로 이동 (호이스팅 에러 방지)
+        function makeDateString(dateObj) {
+            return `${dateObj.getFullYear()}. ${dateObj.getMonth() + 1}. ${dateObj.getDate()}.`;
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyAdHzOLdhbxNgDNJc1slU-6Qk_gexLnPuc",
             authDomain: "my-archive-site.firebaseapp.com",
@@ -194,10 +199,31 @@
         let currentDate = new Date(); 
         let allPosts = []; 
         let allSchedules = []; 
-        let selectedDateString = null; 
+        
+        // 💡 중요: 캘린더를 켜자마자 기본적으로 오늘 날짜가 자동 세팅되도록 변경
+        let selectedDateString = makeDateString(new Date()); 
 
         let currentPage = 1;
         const postsPerPage = 10; 
+
+        // 💡 날짜가 서로 달라도 유연하게 맞춰서 검사해주는 영리한 검증 함수 추가
+        function isSameDate(post, targetDateStr) {
+            if (!post) return false;
+            // 1순위: 파이어베이스 고유 서버 타임스탬프가 존재할 때 정밀 변환 매칭
+            if (post.createdAt && typeof post.createdAt.toDate === 'function') {
+                try {
+                    const d = post.createdAt.toDate();
+                    const pStr = `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`;
+                    if (pStr === targetDateStr) return true;
+                } catch(e) {}
+            }
+            // 2순위: 기존 텍스트 형태 하위 호환 처리 ("2026년 6월 1일" 과 "2026. 6. 1." 포맷 통일 매칭)
+            if (post.date) {
+                const cleanStr = (str) => str.replace(/[^0-9]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 3).join('.');
+                return cleanStr(post.date) === cleanStr(targetDateStr);
+            }
+            return false;
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
@@ -210,7 +236,7 @@
                 document.getElementById('page-calendar').classList.add('active');
                 document.getElementById('menu-calendar').classList.add('active');
                 renderCalendar();
-                if(selectedDateString) selectDate(selectedDateString);
+                if(selectedDateString) selectDate(selectedDateString); // 💡 자동 뷰 로드
             } else if (tabName === 'write') {
                 document.getElementById('page-write').classList.add('active');
                 document.getElementById('menu-write').classList.add('active');
@@ -252,10 +278,6 @@
                     }
                 }).catch((err) => alert("로그인 중 오류가 발생했습니다: " + err.message));
             }
-        }
-
-        function makeDateString(dateObj) {
-            return `${dateObj.getFullYear()}. ${dateObj.getMonth() + 1}. ${dateObj.getDate()}.`;
         }
 
         function handleSubmit(event) {
@@ -339,7 +361,10 @@
             db.collection("posts").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
                 allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderHomePosts(user);
-                if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
+                if (document.getElementById('page-calendar').classList.contains('active')) {
+                    renderCalendar();
+                    if(selectedDateString) selectDate(selectedDateString);
+                }
             });
 
             db.collection("schedules").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
@@ -429,7 +454,8 @@
             for (let day = 1; day <= lastDay; day++) {
                 const targetDateStr = `${year}. ${month + 1}. ${day}.`;
                 
-                const hasPost = allPosts.some(p => p.date === targetDateStr);
+                // 💡 새롭게 만든 유연한 날짜 비교 검사 함수 적용!
+                const hasPost = allPosts.some(p => isSameDate(p, targetDateStr));
                 const hasSchedule = allSchedules.some(s => s.date === targetDateStr);
                 const isSelected = selectedDateString === targetDateStr ? 'selected' : '';
 
@@ -459,7 +485,9 @@
             document.getElementById("schedule-form-title").innerText = `📅 [${dateStr}] 일정 추가하기 (관리자)`;
 
             const detailsContainer = document.getElementById("calendar-details-container");
-            const filteredPosts = allPosts.filter(p => p.date === dateStr);
+            
+            // 💡 여기도 유연한 날짜 비교 검사 함수 적용해서 필터링 처리!
+            const filteredPosts = allPosts.filter(p => isSameDate(p, dateStr));
             const filteredSchedules = allSchedules.filter(s => s.date === dateStr);
             
             const isAdmin = auth.currentUser !== null && auth.currentUser.email === ADMIN_GMAIL;
