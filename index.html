@@ -16,6 +16,8 @@
         .header-container { max-width: 800px; margin: 0 auto; }
         header h1 { font-size: 2.5rem; color: #111; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
         header p { color: #6c757d; font-size: 1rem; }
+        
+        /* 네비게이션 메뉴 */
         nav {
             background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
             border-bottom: 1px solid #e9ecef; padding: 1rem; text-align: center;
@@ -24,17 +26,23 @@
             display: flex; justify-content: center; align-items: center; gap: 1.5rem;
         }
         nav a, nav button { text-decoration: none; color: #495057; font-weight: 600; font-size: 0.95rem; background: none; border: none; cursor: pointer; transition: color 0.2s; }
-        nav a:hover, nav button:hover { color: #228be6; }
+        nav a:hover, nav button:hover, nav a.active { color: #228be6; }
+        
         #auth-btn { color: #228be6; border: 1px solid #228be6; padding: 0.3rem 0.8rem; border-radius: 6px; }
         #auth-btn:hover { background-color: #228be6; color: white; }
+        
         main { flex: 1; max-width: 800px; width: 100%; margin: 2rem auto; padding: 0 1rem; }
         
-        /* 글쓰기/수정 폼 */
-        #write-section { display: none; background: #ffffff; padding: 2rem; border-radius: 12px; border: 2px solid #228be6; margin-bottom: 2rem; }
-        #form-title { margin-bottom: 1rem; color: #228be6; }
+        /* 💡 페이지 콘텐츠 구역 (기본적으로 숨김 처리용 클래스) */
+        .page-content { display: none; }
+        .page-content.active { display: block; } /* active가 붙은 구역만 화면에 보임 */
+
+        /* 글쓰기/수정 폼 래퍼 */
+        .write-box { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); }
+        #form-title { margin-bottom: 1.5rem; color: #228be6; font-size: 1.5rem; }
         .form-group { margin-bottom: 1rem; }
         .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 150px; }
+        .form-group textarea { resize: vertical; min-height: 250px; }
         
         .btn-group { display: flex; gap: 0.5rem; }
         .submit-btn { background-color: #228be6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; flex: 1; }
@@ -46,7 +54,7 @@
         .content-card .date { font-size: 0.85rem; color: #adb5bd; margin-bottom: 1rem; }
         .content-card p { color: #495057; white-space: pre-wrap; }
         
-        /* 관리자용 버튼 레이아웃 */
+        /* 관리자용 버튼 */
         .admin-actions { display: none; position: absolute; top: 1.5rem; right: 1.5rem; gap: 0.8rem; }
         .edit-btn { background: none; border: none; color: #228be6; cursor: pointer; font-weight: 600; }
         .delete-btn { background: none; border: none; color: #fa5252; cursor: pointer; font-weight: 600; }
@@ -69,30 +77,42 @@
     </header>
 
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Logs</a>
-        <a href="#">About</a>
+        <a href="#" id="menu-home" class="nav-link active" onclick="switchTab('home')">Home</a>
+        <a href="#" id="menu-write" class="nav-link" onclick="switchTab('write')" style="display: none;">Write</a>
+        <a href="#" id="menu-about" class="nav-link" onclick="switchTab('about')">About</a>
         <button id="auth-btn" onclick="handleAuth()">Login</button>
     </nav>
 
     <main>
-        <section id="write-section">
-            <h3 id="form-title">📝 새로운 기록 남기기 (관리자)</h3>
-            <form id="write-form" onsubmit="handleSubmit(event)">
-                <div class="form-group">
-                    <input type="text" id="post-title" placeholder="제목을 입력하세요" required>
-                </div>
-                <div class="form-group">
-                    <textarea id="post-content" placeholder="오늘 어떤 일이 있었나요? 자유롭게 기록해보세요." required></textarea>
-                </div>
-                <div class="btn-group">
-                    <button type="submit" id="submit-btn" class="submit-btn">기록하기</button>
-                    <button type="button" id="cancel-btn" class="cancel-btn" onclick="cancelEdit()">수정 취소</button>
-                </div>
-            </form>
+        <section id="page-home" class="page-content active">
+            <div id="posts-container">로딩 중...</div>
         </section>
 
-        <div id="posts-container">로딩 중...</div>
+        <section id="page-write" class="page-content">
+            <div class="write-box">
+                <h3 id="form-title">📝 새로운 기록 남기기 (관리자)</h3>
+                <form id="write-form" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <input type="text" id="post-title" placeholder="제목을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="post-content" placeholder="오늘 어떤 일이 있었나요? 자유롭게 기록해보세요." required></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" id="submit-btn" class="submit-btn">기록하기</button>
+                        <button type="button" id="cancel-btn" class="cancel-btn" onclick="cancelEdit()">수정 취소</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="page-about" class="page-content">
+            <div class="content-card">
+                <h2>About This Space</h2>
+                <p>여기는 나만의 개인 아카이브 공간이야. 파이어베이스와 깃허브 페이지스를 연동해서 실시간으로 글을 관리하고 있어!</p>
+                <p>나중에 여기에 네 프로필이나 깃허브 링크, 이메일 같은 걸 채워 넣으면 예쁘겠지?</p>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -100,75 +120,82 @@
     </footer>
 
     <script>
-        // 파이어베이스 설정값 (네 정보 입력하기!)
+        // 파이어베이스 설정값 (네 정보 무조건 입력하기!)
         const firebaseConfig = {
-            apiKey: "AIzaSyAdHzOLdhbxNgDNJc1slU-6Qk_gexLnPuc",
-            authDomain: "my-archive-site.firebaseapp.com",
-            projectId: "my-archive-site",
-            storageBucket: "my-archive-site.firebasestorage.app",
-            messagingSenderId: "126546847663",
-            appId: "1:126546847663:web:5cca4dec8c37735779315a",
-            measurementId: "G-THNYCMQNKD"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 💡 핵심: 현재 수정 중인 글의 ID를 저장하는 변수 (null이면 새 글 쓰기 모드)
+        // 관리자 구글 이메일 주소 세팅
+        const ADMIN_GMAIL = "khm14978@gmail.com"; 
         let currentEditId = null;
 
-        // ⚠️ 중요: 네 실제 구글 이메일 주소를 여기에 적어줘!
-        const ADMIN_GMAIL = "khm14978@gmail.com"; 
+        // 💡 탭(페이지) 전환 핵심 함수
+        function switchTab(tabName) {
+            // 1. 모든 페이지 콘텐츠 숨기기
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            // 2. 모든 네비게이션 링크에서 파란색 활성화(active) 클래스 떼기
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
 
-        // 로그인 상태 실시간 감시 (기존 코드 유지하되 조건문만 체크)
+            // 3. 선택한 탭에 맞는 화면 켜고 상단 메뉴 불 들어오게 하기
+            if (tabName === 'home') {
+                document.getElementById('page-home').classList.add('active');
+                document.getElementById('menu-home').classList.add('active');
+            } else if (tabName === 'write') {
+                document.getElementById('page-write').classList.add('active');
+                document.getElementById('menu-write').classList.add('active');
+            } else if (tabName === 'about') {
+                document.getElementById('page-about').classList.add('active');
+                document.getElementById('menu-about').classList.add('active');
+            }
+            window.scrollTo(0, 0); // 페이지 바뀔 때 스크롤 맨 위로 올리기
+        }
+
+        // 로그인 상태 감시
         auth.onAuthStateChanged((user) => {
             const authBtn = document.getElementById("auth-btn");
-            const writeSection = document.getElementById("write-section");
+            const menuWrite = document.getElementById("menu-write");
 
-            // 로그인한 유저가 존재하고, 그 유저의 이메일이 지정한 관리자 이메일과 일치할 때만 권한 부여
             if (user && user.email === ADMIN_GMAIL) {
                 authBtn.innerText = "Logout";
-                writeSection.style.style.display = "block";
+                menuWrite.style.display = "inline-block"; // 💡 로그인 시 상단에 'Write' 탭 생성!
             } else {
                 authBtn.innerText = "Login";
-                writeSection.style.display = "none";
-                
-                // 만약 관리자가 아닌 일반 구글 유저가 로그인했다면 강제로 로그아웃 처리하거나 제한
-                if (user && user.email !== ADMIN_GMAIL) {
-                    alert("관리자 계정이 아닙니다. 글쓰기 권한이 없습니다!");
-                    auth.signOut();
-                }
+                menuWrite.style.display = "none";        // 로그아웃 시 탭 소멸
+                switchTab('home');                        // 안전하게 홈 화면으로 튕겨내기
+                cancelEdit();
             }
             renderPosts(user);
         });
 
-        // 💡 구글 팝업창 로그인으로 바뀐 handleAuth 함수
+        // 구글 팝업 로그인 처리
         function handleAuth() {
-            const currentUser = auth.currentUser;
-
-            if (currentUser) {
-                // 이미 로그인 상태면 로그아웃 처리
+            if (auth.currentUser) {
                 auth.signOut().then(() => alert("로그아웃 되었어."));
             } else {
-                // 구글 로그인 공급자 객체 생성
                 const provider = new firebase.auth.GoogleAuthProvider();
-                
-                // 팝업창을 띄워 구글 로그인 진행
                 auth.signInWithPopup(provider)
                     .then((result) => {
-                        const user = result.user;
-                        if (user.email === ADMIN_GMAIL) {
-                            alert("관리자 로그인 성공! 환영해.");
+                        if (result.user.email !== ADMIN_GMAIL) {
+                            alert("관리자 권한이 없는 계정이야!");
+                            auth.signOut();
+                        } else {
+                            alert("관리자님, 환영합니다!");
                         }
                     })
-                    .catch((error) => {
-                        alert("구글 로그인 실패: " + error.message);
-                    });
+                    .catch((err) => alert("로그인 에러: " + err.message));
             }
         }
 
-        // 💡 통합 제출 처리 (새 글 저장 또는 기존 글 수정)
+        // 통합 제출 처리 (글 작성/수정 완료 시 메인 탭으로 튕겨주는 로직 탑재)
         function handleSubmit(event) {
             event.preventDefault();
 
@@ -176,41 +203,38 @@
             const content = document.getElementById("post-content").value;
             
             if (currentEditId) {
-                // [UPDATE] 수정 모드일 때
+                // 수정 완료 처리
                 db.collection("posts").doc(currentEditId).update({
-                    title: title,
-                    content: content
+                    title: title, content: content
                 })
                 .then(() => {
-                    alert("성공적으로 수정되었어!");
-                    cancelEdit(); // 폼 초기화 및 일반 모드 복귀
+                    alert("수정 완료!");
+                    cancelEdit();
+                    switchTab('home'); // 💡 수정이 끝나면 자동으로 홈 화면(글 목록)으로 이동!
                 })
                 .catch(err => alert("수정 실패: " + err.message));
-
             } else {
-                // [CREATE] 새 글 쓰기 모드일 때
+                // 새 글 작성 처리
                 const date = new Date().toLocaleDateString("ko-KR", {
                     year: "numeric", month: "long", day: "numeric",
                     hour: "2-digit", minute: "2-digit"
                 });
 
                 db.collection("posts").add({
-                    title: title,
-                    content: content,
-                    date: date,
+                    title: title, content: content, date: date,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 })
                 .then(() => {
                     document.getElementById("write-form").reset();
+                    switchTab('home'); // 💡 글 쓰기가 완료되면 자동으로 홈 화면으로 이동!
                 })
                 .catch(err => alert("저장 실패: " + err.message));
             }
         }
 
-        // 💡 수정 모드 활성화 함수
-        // 수정 버튼을 누르면 해당 카드의 데이터가 폼 안으로 쏙 들어가고 폼 스타일이 바뀜
+        // 수정 모드 진입 (수정 버튼 누르면 글쓰기 페이지로 강제 화면 전환)
         function startEdit(id, title, content) {
-            currentEditId = id; // 수정할 글 ID 고정
+            currentEditId = id;
             
             document.getElementById("post-title").value = title;
             document.getElementById("post-content").value = content;
@@ -219,8 +243,7 @@
             document.getElementById("submit-btn").innerText = "수정 완료";
             document.getElementById("cancel-btn").style.display = "inline-block";
             
-            // 수정하기 편하게 화면을 맨 위(작성 폼)로 부드럽게 올려줌
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            switchTab('write'); // 💡 메인 화면에서 수정 버튼 누르면 자동으로 'Write' 페이지로 넘어감!
         }
 
         // 수정 취소 및 폼 리셋
@@ -230,20 +253,19 @@
             document.getElementById("form-title").innerText = "📝 새로운 기록 남기기 (관리자)";
             document.getElementById("submit-btn").innerText = "기록하기";
             document.getElementById("cancel-btn").style.display = "none";
+            switchTab('home'); // 취소 누르면 홈으로 복귀
         }
 
-        // [DELETE] 글 삭제
+        // 글 삭제
         function deletePost(id) {
             if (confirm("정말 이 기록을 지울 거야?")) {
                 db.collection("posts").doc(id).delete()
-                    .then(() => {
-                        if(currentEditId === id) cancelEdit(); // 수정하던 글을 삭제하면 폼도 리셋
-                    })
+                    .then(() => { if(currentEditId === id) cancelEdit(); })
                     .catch(err => alert("삭제 실패: " + err.message));
             }
         }
 
-        // [READ] 실시간 글 목록 가져오기
+        // 실시간 글 목록 가져오기
         function renderPosts(user) {
             const postsContainer = document.getElementById("posts-container");
 
@@ -253,10 +275,9 @@
                     return;
                 }
 
-                const isAdmin = user !== null;
+                const isAdmin = user !== null && user.email === ADMIN_GMAIL;
                 postsContainer.innerHTML = snapshot.docs.map(doc => {
                     const post = doc.data();
-                    // 자바스크립트 템플릿 리터럴 문법 오류를 막기 위해 줄바꿈 및 따옴표 치환 처리
                     const safeTitle = post.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
                     const safeContent = post.content.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
 
