@@ -118,34 +118,53 @@
         // 💡 핵심: 현재 수정 중인 글의 ID를 저장하는 변수 (null이면 새 글 쓰기 모드)
         let currentEditId = null;
 
-        // 로그인 상태 감시
+        // ⚠️ 중요: 네 실제 구글 이메일 주소를 여기에 적어줘!
+        const ADMIN_GMAIL = "khm14978@gmail.com"; 
+
+        // 로그인 상태 실시간 감시 (기존 코드 유지하되 조건문만 체크)
         auth.onAuthStateChanged((user) => {
             const authBtn = document.getElementById("auth-btn");
             const writeSection = document.getElementById("write-section");
 
-            if (user) {
+            // 로그인한 유저가 존재하고, 그 유저의 이메일이 지정한 관리자 이메일과 일치할 때만 권한 부여
+            if (user && user.email === ADMIN_GMAIL) {
                 authBtn.innerText = "Logout";
-                writeSection.style.display = "block";
+                writeSection.style.style.display = "block";
             } else {
                 authBtn.innerText = "Login";
                 writeSection.style.display = "none";
-                cancelEdit(); // 로그아웃되면 수정 모드도 리셋
+                
+                // 만약 관리자가 아닌 일반 구글 유저가 로그인했다면 강제로 로그아웃 처리하거나 제한
+                if (user && user.email !== ADMIN_GMAIL) {
+                    alert("관리자 계정이 아닙니다. 글쓰기 권한이 없습니다!");
+                    auth.signOut();
+                }
             }
             renderPosts(user);
         });
 
-        // 로그인 / 로그아웃 처리
+        // 💡 구글 팝업창 로그인으로 바뀐 handleAuth 함수
         function handleAuth() {
-            if (auth.currentUser) {
+            const currentUser = auth.currentUser;
+
+            if (currentUser) {
+                // 이미 로그인 상태면 로그아웃 처리
                 auth.signOut().then(() => alert("로그아웃 되었어."));
             } else {
-                const email = prompt("관리자 이메일:");
-                const password = prompt("비밀번호:");
-                if (email && password) {
-                    auth.signInWithEmailAndPassword(email, password)
-                        .then(() => alert("로그인 성공!"))
-                        .catch((error) => alert("에러: " + error.message));
-                }
+                // 구글 로그인 공급자 객체 생성
+                const provider = new firebase.auth.GoogleAuthProvider();
+                
+                // 팝업창을 띄워 구글 로그인 진행
+                auth.signInWithPopup(provider)
+                    .then((result) => {
+                        const user = result.user;
+                        if (user.email === ADMIN_GMAIL) {
+                            alert("관리자 로그인 성공! 환영해.");
+                        }
+                    })
+                    .catch((error) => {
+                        alert("구글 로그인 실패: " + error.message);
+                    });
             }
         }
 
