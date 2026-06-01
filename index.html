@@ -924,7 +924,7 @@
         // 💡 [FORTUNE FUNCTIONS] 운세 데이터 로드 함수 추가
         function loadTodayFortune() {
             const todayStr = makeDateString(new Date());
-            document.getElementById("fortune-date-title").innerText = `${todayStr} 오늘의 운세`;
+            document.getElementById("fortune-date-title").innerText = `${todayStr} Gemini가 알려주는 오늘의 운세`;
 
             db.collection("fortunes").doc(todayStr).get().then((doc) => {
                 const textZone = document.getElementById("fortune-text-zone");
