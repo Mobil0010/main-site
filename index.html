@@ -67,7 +67,7 @@
 
         /* 게시글 및 일정 카드 */
         .content-card { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02); margin-bottom: 1.5rem; position: relative; }
-        .content-card h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #212529; padding-right: 6rem; }
+        .content-card h2 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #212529; text-align: center; padding-right: 0; }
         .content-card .date { font-size: 0.85rem; color: #adb5bd; margin-bottom: 1rem; }
         .content-card p { color: #495057; white-space: pre-wrap; }
         
@@ -229,6 +229,47 @@
             margin: 24px 0;
             background-color: #e1e4e6;
             border: 0;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 1.5rem 1rem 1rem 1rem; /* 헤더 여백 축소 */
+            }
+            header h1 {
+                font-size: 1.8rem; /* 모바일 전용 타이틀 크기 */
+            }
+            header p {
+                font-size: 0.85rem;
+            }
+            main {
+                margin: 1rem auto; /* 상하 공백 줄이기 */
+            }
+            .content-card {
+                padding: 1.2rem; /* 💡 핵심: 카드 여백을 줄여서 글자가 들어갈 공간 확보! */
+            }
+            .content-card h2 {
+                font-size: 1.25rem; /* 카드 제목 크기 축소 */
+            }
+            .content-card p {
+                font-size: 0.95rem; /* 본문 글씨 살짝 조절 */
+            }
+            
+            /* 📅 캘린더 모바일 최적화 */
+            .calendar-wrapper {
+                padding: 1rem;
+            }
+            .calendar-day {
+                padding: 0.6rem 0 0.9rem 0; /* 날짜 칸 높이 줄여서 안 터지게 방지 */
+                font-size: 0.9rem;
+            }
+            .dots-container {
+                bottom: 3px; /* 점 표시 위치 살짝 올림 */
+            }
+
+            /* 🔥 둠 게임 화면 모바일 세로 비율 최적화 */
+            #doom-container {
+                height: 260px !important; /* 가로가 좁은데 세로만 400px이면 찌그러지니까 높이 조절 */
+            }
         }
     </style>
 
