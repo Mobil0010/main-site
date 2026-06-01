@@ -354,7 +354,7 @@
                 <p style="font-size: 0.9rem; color: #868e96; margin-bottom: 1.5rem;">게임 화면을 클릭하면 키보드 제어가 활성화됩니다. (ESC로 마우스 커서 해제)</p>
                 
                 <div style="width: 100%; max-width: 640px; margin: 0 auto; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                    <canvas id="doom-canvas" style="width: 100%; display: block;"></canvas>
+                    <div id="doom-container" style="width: 100%; height: 400px;"></div>
                 </div>
             </div>
         </section>
@@ -873,37 +873,38 @@
         let doomCiInstance = null;
 
         function startDoomGame() {
-            // 1. 모바일 기기 접속 여부 체크 (UserAgent 검사)
             const isMobile = /Mobi|Android|iPhone|iPad|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (isMobile) {
-                // 모바일 접속이 확인되면 게임을 실행하지 않고 안내 화면으로 교체
-                const canvasContainer = document.getElementById("doom-canvas").parentElement;
-                canvasContainer.innerHTML = `
-                    <div style="padding: 4rem 1rem; color: #495057; background: #111; border-radius: 8px;">
-                        <span style="font-size: 3.5rem; display: block; margin-bottom: 1rem;">🚫</span>
-                        <h3 style="color: #fa5252; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">PC 전용 플레이 구역</h3>
-                        <p style="font-size: 1rem; color: #adb5bd; line-height: 1.6;">
-                            고전 둠(DOOM)은 키보드 조작이 필수적인 게임이라<br>
-                            모바일 환경에서는 원활한 플레이가 불가능합니다.<br>
-                            <strong style="color: #228be6;">PC 브라우저</strong>로 다시 접속해 주세요.
-                        </p>
-                    </div>
-                `;
-                return; // 💡 뒤쪽의 게임 시동 로직을 실행하지 않고 여기서 바로 차단!
+                // 💡 타겟 ID를 doom-container로 변경
+                const container = document.getElementById("doom-container");
+                if (container) {
+                    container.parentElement.innerHTML = `
+                        <div style="padding: 4rem 1rem; color: #495057; background: #111; border-radius: 8px; text-align: center;">
+                            <span style="font-size: 3.5rem; display: block; margin-bottom: 1rem;">🚫</span>
+                            <h3 style="color: #fa5252; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">PC 전용 플레이 구역</h3>
+                            <p style="font-size: 1rem; color: #adb5bd; line-height: 1.6;">
+                                고전 둠(DOOM)은 키보드 조작이 필수적인 게임이라<br>
+                                모바일 환경에서는 원활한 플레이가 불가능해.<br>
+                                <strong style="color: #228be6;">화면이 넓고 키보드가 있는 PC 브라우저</strong>로 다시 접속해 줘!
+                            </p>
+                        </div>
+                    `;
+                }
+                return; 
             }
 
-            // 2. PC 접속일 경우에만 아래 기존 엔진 구동 로직 실행
             if (doomCiInstance !== null) return;
 
             Dos.configure({
                 wdkUrl: "https://js-dos.com/v7/build/wdk/"
             });
 
-            const canvas = document.getElementById("doom-canvas");
+            // 💡 canvas 대신 새로 만든 div 요소를 타겟으로 잡음!
+            const container = document.getElementById("doom-container");
             const doomZipUrl = "https://js-dos.com/v7/build/archive/doom.zip";
 
-            Dos(canvas)
+            Dos(container)
                 .run(doomZipUrl)
                 .then((ci) => {
                     doomCiInstance = ci;
@@ -911,8 +912,7 @@
                 })
                 .catch((err) => {
                     console.error("둠 구동 실패:", err);
-                    document.getElementById("doom-canvas").parentElement.innerHTML = 
-                        `<p style='color:#fa5252; padding:2rem;'>게임 로딩 중 오류가 발생했습니다: ${err.message}</p>`;
+                    container.innerHTML = `<p style='color:#fa5252; padding:2rem; text-align:center;'>게임 로딩 중 오류가 발생했습니다: ${err.message}</p>`;
                 });
         }
     </script>
