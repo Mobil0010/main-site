@@ -869,28 +869,44 @@
             });
         }
 
-        // 💡 전역 변수로 게임 엔진 상태 저장 (여러 번 중복 실행 방지)
+        // 💡 기존의 startDoomGame() 함수를 이 코드로 통째로 교체해줘!
         let doomCiInstance = null;
 
         function startDoomGame() {
-            // 이미 게임 인스턴스가 켜져 있다면 다시 불러오지 않고 패스
+            // 1. 모바일 기기 접속 여부 체크 (UserAgent 검사)
+            const isMobile = /Mobi|Android|iPhone|iPad|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // 모바일 접속이 확인되면 게임을 실행하지 않고 안내 화면으로 교체
+                const canvasContainer = document.getElementById("doom-canvas").parentElement;
+                canvasContainer.innerHTML = `
+                    <div style="padding: 4rem 1rem; color: #495057; background: #111; border-radius: 8px;">
+                        <span style="font-size: 3.5rem; display: block; margin-bottom: 1rem;">🚫</span>
+                        <h3 style="color: #fa5252; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">PC 전용 플레이 구역</h3>
+                        <p style="font-size: 1rem; color: #adb5bd; line-height: 1.6;">
+                            고전 둠(DOOM)은 키보드 조작이 필수적인 게임이라<br>
+                            모바일 환경에서는 원활한 플레이가 불가능합니다.<br>
+                            <strong style="color: #228be6;">PC 브라우저</strong>로 다시 접속해 주세요.
+                        </p>
+                    </div>
+                `;
+                return; // 💡 뒤쪽의 게임 시동 로직을 실행하지 않고 여기서 바로 차단!
+            }
+
+            // 2. PC 접속일 경우에만 아래 기존 엔진 구동 로직 실행
             if (doomCiInstance !== null) return;
 
-            // js-dos 환경 설정 (서버 경로 지정)
             Dos.configure({
                 wdkUrl: "https://js-dos.com/v7/build/wdk/"
             });
 
-            // 캔버스 요소를 찾아서 무료 쉐어웨어 둠 DOS 버전 실행
             const canvas = document.getElementById("doom-canvas");
-            
-            // js-dos 공인 CDN에 등록되어 있는 순수 합법 둠 쉐어웨어 압축 파일 주소야!
             const doomZipUrl = "https://js-dos.com/v7/build/archive/doom.zip";
 
             Dos(canvas)
                 .run(doomZipUrl)
                 .then((ci) => {
-                    doomCiInstance = ci; // 성공적으로 로드되면 인스턴스 보관
+                    doomCiInstance = ci;
                     console.log("🔥 DOOM 구동 성공! 악마를 물리치러 가십시오.");
                 })
                 .catch((err) => {
