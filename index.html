@@ -302,12 +302,12 @@
                 <button onclick="generateFortuneWithGemini()" class="page-btn" style="color: #6741d9; border-color: #6741d9;">Gemini AI 운세 생성하기</button>
             </div>
 
-            <div class="content-card" style="border-top: 5px solid #6741d9 !important; text-align: center; padding: 3rem 2rem;">
-                <span style="font-size: 3rem;">🔮</span>
-                <h2 id="fortune-date-title" style="font-size: 1.6rem; margin: 1rem 0;">오늘의 운세</h2>
-                <p id="fortune-text-zone" style="font-size: 1.1rem; color: #495057; line-height: 1.8; white-space: pre-wrap;">
+            <div class="content-card" style="border-top: 5px solid #6741d9 !important; text-align: left; padding: 3rem 2rem;">
+                <span style="font-size: 3rem; display: block; text-align: center;">🔮</span>
+                <h2 id="fortune-date-title" style="font-size: 1.6rem; margin: 1rem 0; text-align: center;">오늘의 운세</h2>
+                <div id="fortune-text-zone" style="font-size: 1.1rem; color: #495057; line-height: 1.8;">
                     데이터를 불러오는 중입니다...
-                </p>
+                </div>
             </div>
         </section>
     </main>
@@ -764,10 +764,12 @@
             document.getElementById("fortune-date-title").innerText = `${todayStr} 오늘의 운세`;
 
             db.collection("fortunes").doc(todayStr).get().then((doc) => {
+                const textZone = document.getElementById("fortune-text-zone");
                 if (doc.exists) {
-                    document.getElementById("fortune-text-zone").innerText = doc.data().content;
+                    // 💡 innerText를 innerHTML로 바꾸고 marked.parse로 감싸서 마크다운 출력!
+                    textZone.innerHTML = marked.parse(doc.data().content);
                 } else {
-                    document.getElementById("fortune-text-zone").innerText = "아직 오늘 자 AI 운세가 생성되지 않았습니다.\n관리자 로그인 후 운세를 생성하시거나 수동 자동화 트리거를 대기해 주세요.";
+                    textZone.innerHTML = `<p style="text-align:center; color:#868e96;">아직 오늘 자 AI 운세가 생성되지 않았습니다.<br>관리자 로그인 후 운세를 생성하시거나 수동 자동화 트리거를 대기해 주세요.</p>`;
                 }
             }).catch(err => alert("운세를 불러오는 중 오류가 발생했습니다: " + err.message));
         }
