@@ -19,13 +19,45 @@
         
         nav {
             background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);
-            border-bottom: 1px solid #e9ecef; padding: 1rem; text-align: center;
+            border-bottom: 1px solid #e9ecef; padding: 1rem;
             position: sticky; top: 0; z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-            display: flex; justify-content: center; align-items: center; gap: 1.5rem;
+            
+            display: flex; 
+            align-items: center; 
+            gap: 1.5rem;
+            
+            /* 💡 가로 스크롤 활성화 핵심 코드 */
+            overflow-x: auto;
+            white-space: nowrap;
+            justify-content: flex-start; /* 모바일 밀림 방지를 위해 왼쪽부터 정렬 */
+            -webkit-overflow-scrolling: touch; /* iOS 아이폰에서 부드러운 스크롤 지원 */
         }
-        nav a, nav button { text-decoration: none; color: #495057; font-weight: 600; font-size: 0.95rem; background: none; border: none; cursor: pointer; transition: color 0.2s; }
+
+        /* 💡 모바일 화면에서 스크롤바가 안 보이게 깔끔하게 숨기기 */
+        nav::-webkit-scrollbar {
+            display: none;
+        }
+        nav {
+            -ms-overflow-style: none;  /* IE, 엣지 */
+            scrollbar-width: none;  /* 파이어폭스 */
+        }
+
+        /* 💡 메뉴 아이템들이 가로로 압축되거나 찌그러지지 않게 방지 */
+        nav a, nav button { 
+            flex-shrink: 0; /* 글자가 줄어들지 않도록 고정 */
+            text-decoration: none; color: #495057; font-weight: 600; font-size: 0.95rem; background: none; border: none; cursor: pointer; transition: color 0.2s; 
+        }
         nav a:hover, nav button:hover, nav a.active { color: #228be6; }
+        #auth-btn { color: #228be6; border: 1px solid #228be6; padding: 0.3rem 0.8rem; border-radius: 6px; }
+        #auth-btn:hover { background-color: #228be6; color: white; }
+
+        /* 💡 화면이 넓은 데스크톱(PC)에서는 원래대로 가운데 정렬하기 */
+        @media (min-width: 600px) {
+            nav {
+                justify-content: center;
+            }
+        }
         #auth-btn { color: #228be6; border: 1px solid #228be6; padding: 0.3rem 0.8rem; border-radius: 6px; }
         #auth-btn:hover { background-color: #228be6; color: white; }
         
