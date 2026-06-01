@@ -399,6 +399,22 @@
         let isEditingAbout = false; 
         let rawAboutMarkdown = "";  
 
+        function formatDateTime(dateSource) {
+            if (!dateSource) return "";
+            
+            // 파이어베이스 Timestamp 객체일 경우를 대비한 안전장치
+            const date = dateSource.toDate ? dateSource.toDate() : new Date(dateSource);
+            
+            return date.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true // 오전/오후 표시 활성화
+            });
+        }
+
         function isSameDate(post, targetDateStr) {
             if (!post) return false;
             if (post.createdAt && typeof post.createdAt.toDate === 'function') {
@@ -667,7 +683,9 @@
             return `
                 <section class="content-card">
                     <h2>${post.title}</h2>
-                    <div class="date">${post.date || '방금 전'}</div>
+                    
+                    <div class="date">${formatDateTime(post.createdAt) || post.date || '방금 전'}</div>
+                    
                     <p>${post.content}</p>
                     <div class="admin-actions" style="display: ${isAdmin ? 'flex' : 'none'}">
                         <button class="edit-btn" onclick="startEdit('${post.id}', '${safeTitle}', '${safeContent}')">수정</button>
