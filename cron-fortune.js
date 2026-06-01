@@ -17,6 +17,13 @@ async function run() {
         body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
     });
     const geminiData = await geminiRes.json();
+
+    // 👉 구글이 에러를 반환했는지 안전하게 먼저 검사합니다.
+    if (!geminiData.candidates || geminiData.candidates.length === 0) {
+        console.error("❌ [구글 Gemini 반환 에러 원본]:", JSON.stringify(geminiData, null, 2));
+        throw new Error("Gemini가 정상적인 답변을 주지 못했습니다. 위의 에러 원본을 확인해 주세요.");
+    }
+
     const fortuneText = geminiData.candidates[0].content.parts[0].text;
     console.log(`[Gemini] 운세 생성 완료: ${fortuneText.substring(0, 20)}...`);
 
