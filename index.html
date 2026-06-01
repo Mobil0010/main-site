@@ -959,6 +959,23 @@
                 }
             }
         }, { passive: false });
+
+        // 💡 다른 인터넷 사이트에 갔다 돌아왔을 때 둠이 지 멋대로 깨어나는 현상 방지
+        window.addEventListener('focus', function() {
+            // js-dos 자체 내부 엔진이 먼저 깨어나는 걸 기다렸다가 0.1초 뒤에 확실하게 가로챔
+            setTimeout(() => {
+                const doomPage = document.getElementById('page-doom');
+                
+                // 1. 만약 현재 내 사이트에서 활성화된 탭이 'doom'이 아니라면?
+                if (doomPage && !doomPage.classList.contains('active')) {
+                    // 2. 가동 중인 둠 세션을 강제로 다시 일시정지 상태로 묶어버림
+                    if (typeof doomSession !== 'undefined' && doomSession && typeof doomSession.pause === 'function') {
+                        doomSession.pause();
+                        console.log("⏸️ 브라우저 포커스 복귀: 둠 탭이 아니므로 일시정지 상태를 유지합니다.");
+                    }
+                }
+            }, 100); // 0.1초 딜레이 타이머
+        });
     </script>
 </body>
 </html>
