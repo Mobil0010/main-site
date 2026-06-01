@@ -478,6 +478,9 @@
         }
 
         function switchTab(tabName) {
+            sessionStorage.setItem('activeTab', tabName);
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
 
@@ -1021,6 +1024,17 @@
                     }
                 }
             }, 0);
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTab = sessionStorage.getItem('activeTab');
+            
+            // 저장된 탭이 있고, 그게 홈이 아니라면 해당 탭으로 강제 이동
+            if (savedTab && savedTab !== 'home') {
+                // 브라우저가 파이어베이스 등 데이터를 다 그릴 시간을 0.05초만 벌어주는 타이머
+                setTimeout(() => {
+                    switchTab(savedTab);
+                }, 50);
+            }
         });
     </script>
 </body>
