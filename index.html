@@ -242,8 +242,8 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
-    <link rel="stylesheet" href="https://unpkg.com/js-dos@7.3.11/dist/js-dos.css">
-    <script src="https://unpkg.com/js-dos@7.3.11/dist/js-dos.js"></script>
+    <<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/js-dos@7.3.11/dist/js-dos.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-dos@7.3.11/dist/js-dos.js"></script>
 </head>
 </head>
 <body>
@@ -876,7 +876,6 @@
             const isMobile = /Mobi|Android|iPhone|iPad|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             if (isMobile) {
-                // 💡 타겟 ID를 doom-container로 변경
                 const container = document.getElementById("doom-container");
                 if (container) {
                     container.parentElement.innerHTML = `
@@ -885,8 +884,8 @@
                             <h3 style="color: #fa5252; font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">PC 전용 플레이 구역</h3>
                             <p style="font-size: 1rem; color: #adb5bd; line-height: 1.6;">
                                 고전 둠(DOOM)은 키보드 조작이 필수적인 게임이라<br>
-                                모바일 환경에서는 원활한 플레이가 불가능해.<br>
-                                <strong style="color: #228be6;">화면이 넓고 키보드가 있는 PC 브라우저</strong>로 다시 접속해 줘!
+                                모바일 환경에서는 원활한 플레이가 불가능합니다.<br>
+                                <strong style="color: #228be6;">화면이 넓고 키보드가 있는 PC 브라우저</strong>로 다시 접속해 주세요.
                             </p>
                         </div>
                     `;
@@ -896,13 +895,15 @@
 
             if (doomCiInstance !== null) return;
 
+            // 💡 핵심: 가상 구동 엔진(wdk) 서버 경로도 jsDelivr 우회 주소로 전면 교체!
             Dos.configure({
-                wdkUrl: "https://js-dos.com/v7/build/wdk/"
+                wdkUrl: "https://cdn.jsdelivr.net/npm/js-dos@7.3.11/dist/wdk/"
             });
 
-            // 💡 canvas 대신 새로 만든 div 요소를 타겟으로 잡음!
             const container = document.getElementById("doom-container");
-            const doomZipUrl = "https://js-dos.com/v7/build/archive/doom.zip";
+            
+            // 💡 게임 압축파일(WAD)도 신뢰성 높은 오픈소스 주소로 매핑
+            const doomZipUrl = "https://cdn.jsdelivr.net/npm/js-dos@7.3.11/dist/wp/doom.zip";
 
             Dos(container)
                 .run(doomZipUrl)
