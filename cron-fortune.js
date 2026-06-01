@@ -6,7 +6,7 @@ async function run() {
     console.log(`[시작] ${todayStr} 자 자동 운세 생성을 시작합니다.`);
 
     // 💡 리스트에서 확인된 정식 v1 주소와 gemini-3.5-flash 매칭!
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     const promptText = `너는 아주 친절하고 위트 있는 스타 점술가야. 오늘 날짜는 ${todayStr}이야. 오늘 하루를 시작하는 방문자들을 위해 재미있고, 희망적이며, 따뜻한 오늘의 총운을 정중하고 친근한 존댓말로 3~4문장 정도로 작성해 줘. 너무 뻔한 기계적인 말 말고 마음을 울리는 센스 있는 멘트로 써줘.`;
     
     const geminiRes = await fetch(geminiUrl, {
