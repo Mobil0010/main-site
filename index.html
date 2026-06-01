@@ -242,8 +242,8 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 
-    <link rel="stylesheet" href="./js-dos.css">
-    <script src="./js-dos.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/js-dos@7.3.11/build/js-dos.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-dos@7.3.11/build/js-dos.js"></script>
 </head>
 </head>
 <body>
@@ -895,15 +895,15 @@
 
             if (doomCiInstance !== null) return;
 
-            // 핵심 부품(wdk) 구동 경로 설정
+            // 💡 내부 경로도 dist에서 build로 전면 수정 완료!
             Dos.configure({
-                wdkUrl: "https://unpkg.com/js-dos@7.3.0/build/wdk/"
+                wdkUrl: "https://cdn.jsdelivr.net/npm/js-dos@7.3.11/build/wdk/"
             });
 
             const container = document.getElementById("doom-container");
             
-            // 💡 이제 외부 링크가 아니라 내 서버의 로컬 doom.zip을 바로 실행!
-            const doomZipUrl = "./doom.zip";
+            // jsDelivr 패키지 내부에 안전하게 동봉된 둠 게임 파일 주소야
+            const doomZipUrl = "https://cdn.jsdelivr.net/npm/js-dos@7.3.11/build/archive/doom.zip";
 
             Dos(container)
                 .run(doomZipUrl)
