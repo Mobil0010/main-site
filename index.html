@@ -96,6 +96,12 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
 
@@ -163,27 +169,22 @@
         </section>
 
         <section id="page-about" class="page-content">
-            <div class="content-card">
-                <div class="profile-zone">
-                    <div class="profile-avatar">👩‍💻</div>
-                </div>
-                
-                <div class="profile-info">
-                    <h2>나만의 기록 보관소</h2>
-                    <p class="bio">
-                        배운 것, 생각한 것, 그리고 좋아하는 것들을 흘려보내지 않고 차곡차곡 모아두는 개인 아카이브 공간입니다. 마주쳤던 개발 에러 로그부터 소소한 일상까지 자유롭게 기록합니다.
-                    </p>
-                    
-                    <div class="tag-container">
-                        <span class="tag">#Rust</span>
-                        <span class="tag">#Python</span>
-                        <span class="tag">#Archive</span>
+            <div id="admin-about-btn-zone" style="display: none; margin-bottom: 1rem; text-align: right;">
+                <button onclick="toggleEditAbout()" id="about-edit-toggle-btn" class="page-btn">소개 글 수정하기</button>
+            </div>
+
+            <div id="about-edit-form-zone" class="write-box" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: #228be6;">📝 About 내용 편집 (Markdown / LaTeX 지원)</h3>
+                <form onsubmit="saveAbout(event)">
+                    <div class="form-group">
+                        <textarea id="about-markdown-input" placeholder="마크다운 문법과 LaTeX 수식을 이용해 소개해 보세요.&#10;인라인 수식은 $E=mc^2$, 블록 수식은 $$주요수식$$ 형태로 작성하시면 됩니다." required style="width: 100%; min-height: 350px; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-family: monospace; font-size: 0.95rem; line-height: 1.5;"></textarea>
                     </div>
-                    
-                    <div class="link-zone">
-                        <a href="https://github.com/Mobil0010" target="_blank">🔗 GitHub 방문하기</a>
-                    </div>
-                </div>
+                    <button type="submit" class="submit-btn">소개 글 저장하기</button>
+                </form>
+            </div>
+
+            <div id="about-render-zone" class="content-card" style="line-height: 1.8; min-height: 200px;">
+                데이터를 불러오는 중입니다...
             </div>
         </section>
     </main>
@@ -226,6 +227,9 @@
 
         let currentPage = 1;
         const postsPerPage = 10; 
+
+        let isEditingAbout = false; // 현재 About 편집 모드 상태 여부
+        let rawAboutMarkdown = "";  // 파이어베이스에서 가져온 원본 마크다운 텍스트 보관함
 
         // 💡 날짜가 서로 달라도 유연하게 맞춰서 검사해주는 영리한 검증 함수 추가
         function isSameDate(post, targetDateStr) {
@@ -272,17 +276,23 @@
             const authBtn = document.getElementById("auth-btn");
             const menuWrite = document.getElementById("menu-write");
             const adminScheduleZone = document.getElementById("admin-schedule-zone");
+            const adminAboutBtnZone = document.getElementById("admin-about-btn-zone");
 
             if (user && user.email === ADMIN_GMAIL) {
                 authBtn.innerText = "Logout";
                 menuWrite.style.display = "inline-block";
                 adminScheduleZone.style.display = "block"; 
+                adminAboutBtnZone.style.display = "block";
             } else {
                 authBtn.innerText = "Login";
                 menuWrite.style.display = "none";
                 adminScheduleZone.style.display = "none";  
                 if(document.getElementById('menu-write').classList.contains('active')) switchTab('home');
                 cancelEdit();
+                if (adminAboutBtnZone) adminAboutBtnZone.style.display = "none";
+                isEditingAbout = false;
+                document.getElementById("about-edit-form-zone").style.display = "none";
+                document.getElementById("about-edit-toggle-btn").innerText = "소개 글 수정하기";
             }
             fetchDataRealtime(user);
         });
@@ -408,6 +418,16 @@
                     renderCalendar();
                     if(selectedDateString) selectDate(selectedDateString);
                 }
+            });
+
+            db.collection("abouts").doc("main").onSnapshot((doc) => {
+                if (doc.exists) {
+                    rawAboutMarkdown = doc.data().content;
+                } else {
+                    // 만약 DB에 데이터가 아예 없다면 보여줄 기본값 기본 가이드
+                    rawAboutMarkdown = "# 나만의 아카이브\n\n오른쪽 상단 버튼을 눌러 마크다운으로 자기소개를 채워보세요!\n\n수식 예시: $💾 + 📝 = 🚀$";
+                }
+                renderAboutView(); // 가져온 마크다운 데이터를 렌더링 함수로 전달
             });
         }
 
@@ -574,6 +594,58 @@
             document.getElementById("schedule-form-title").innerText = `📅 [${selectedDateString}] 일정 추가하기 (관리자)`;
             document.getElementById("schedule-submit-btn").innerText = "추가";
             document.getElementById("schedule-cancel-btn").style.display = "none";
+        }
+
+        // 💡 마크다운 및 LaTeX 수식 통합 렌더링 함수
+        function renderAboutView() {
+            const renderZone = document.getElementById("about-render-zone");
+            if (!renderZone) return;
+
+            // 1. 마크다운 변환기를 통해 HTML 스트링으로 변환
+            let htmlContent = marked.parse(rawAboutMarkdown);
+            renderZone.innerHTML = htmlContent;
+
+            // 2. KaTeX 자동 렌더러를 실행하여 본문 안의 $와 $$ 수식 기호를 찾아 수식 가공
+            renderMathInElement(renderZone, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        // 편집 영역 켜고 끄기 토글 함수
+        function toggleEditAbout() {
+            const formZone = document.getElementById("about-edit-form-zone");
+            const toggleBtn = document.getElementById("about-edit-toggle-btn");
+            const inputArea = document.getElementById("about-markdown-input");
+
+            isEditingAbout = !isEditingAbout;
+            if (isEditingAbout) {
+                formZone.style.display = "block";
+                inputArea.value = rawAboutMarkdown;
+                toggleBtn.innerText = "변경 취소";
+            } else {
+                formZone.style.display = "none";
+                toggleBtn.innerText = "소개 글 수정하기";
+            }
+        }
+
+        // 수정한 내용 파이어베이스 데이터베이스에 덮어쓰기 저장 함수
+        function saveAbout(event) {
+            event.preventDefault();
+            const newContent = document.getElementById("about-markdown-input").value;
+
+            db.collection("abouts").doc("main").set({
+                content: newContent,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert("소개 글이 성공적으로 저장되었습니다.");
+                toggleEditAbout();
+            })
+            .catch(err => alert("저장 중 오류가 발생했습니다: " + err.message));
         }
     </script>
 </body>
