@@ -751,7 +751,24 @@
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth();
 
-            monthYearLabel.innerText = `${year}년 ${month + 1}월`;
+            // 💡 년도 선택 옵션 생성 (현재 년도 기준 과거 10년 ~ 미래 10년)
+            let yearOptions = "";
+            for (let y = year - 10; y <= year + 10; y++) {
+                yearOptions += `<option value="${y}" ${y === year ? 'selected' : ''}>${y}년</option>`;
+            }
+
+            // 💡 월 선택 옵션 생성 (0 ~ 11)
+            let monthOptions = "";
+            for (let m = 0; m < 12; m++) {
+                monthOptions += `<option value="${m}" ${m === month ? 'selected' : ''}>${m + 1}월</option>`;
+            }
+
+            // 💡기존 text 대신 셀렉트 박스 주입 (디자인 안 깨지게 보더/배경 투명 처리)
+            monthYearLabel.innerHTML = `
+                <select id="calendar-year-select" onchange="selectYearMonth()" style="font-size: 1.3rem; font-weight: bold; border: none; background: transparent; cursor: pointer; outline: none; font-family: inherit; color: #111;">${yearOptions}</select>
+                <select id="calendar-month-select" onchange="selectYearMonth()" style="font-size: 1.3rem; font-weight: bold; border: none; background: transparent; cursor: pointer; outline: none; font-family: inherit; color: #111;">${monthOptions}</select>
+            `;
+
             grid.innerHTML = "";
 
             const weeks = ['일', '월', '화', '수', '목', '금', '토'];
@@ -771,10 +788,10 @@
                 const hasSchedule = allSchedules.some(s => s.date === targetDateStr);
                 const isSelected = selectedDateString === targetDateStr ? 'selected' : '';
 
-                let dotsHTML = '<div class="dots-container">';
-                if (hasPost) dotsHTML += '<div class="dot post"></div>';
-                if (hasSchedule) dotsHTML += '<div class="dot schedule"></div>';
-                dotsHTML += '</div>';
+                        let dotsHTML = '<div class="dots-container">';
+                        if (hasPost) dotsHTML += '<div class="dot post"></div>';
+                        if (hasSchedule) dotsHTML += '<div class="dot schedule"></div>';
+                        dotsHTML += '</div>';
 
                 grid.innerHTML += `
                     <div class="calendar-day ${isSelected}" onclick="selectDate('${targetDateStr}')">
@@ -788,6 +805,16 @@
         function changeMonth(direction) {
             currentDate.setMonth(currentDate.getMonth() + direction);
             renderCalendar();
+        }
+        function selectYearMonth() {
+            const targetYear = parseInt(document.getElementById("calendar-year-select").value);
+            const targetMonth = parseInt(document.getElementById("calendar-month-select").value);
+            
+            // 달력 기준일을 고른 년/월로 강제 매칭
+            currentDate.setFullYear(targetYear);
+            currentDate.setMonth(targetMonth);
+            
+            renderCalendar(); // 달력 다시 그리기
         }
 
         function selectDate(dateStr) {
