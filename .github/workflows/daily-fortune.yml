@@ -2,7 +2,7 @@ name: Daily Gemini Fortune Automation
 
 on:
   schedule:
-    - cron: '0 21 * * *' # 💡 매일 한국 시간(KST) 오전 6시 (UTC 기준 21시)에 자동으로 실행해라!
+    - cron: '0 15 * * *' # 매일 오후 3시에 실행 (UTC 기준, 한국 시간으로는 매일 자정)
   workflow_dispatch: # 깃허브 웹에서 원할 때 수동으로 실행할 수 있는 버튼도 만들어라!
 
 jobs:
