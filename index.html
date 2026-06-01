@@ -885,6 +885,7 @@
 
         // 💡 기존의 startDoomGame() 함수를 이 코드로 통째로 교체해줘!
         let doomCiInstance = null;
+        let doomSession = null;
 
         function startDoomGame() {
             const isMobile = /Mobi|Android|iPhone|iPad|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -907,17 +908,17 @@
                 return; 
             }
 
-            if (doomCiInstance !== null) return;
+            // 중복 실행 방지 락 걸기 (둘 중 하나라도 채워져 있으면 리턴)
+            if (doomCiInstance !== null || doomSession !== null) return;
 
-            // 💡 [수정] 에러를 뿜어내던 Dos.configure({ ... }) 블록을 통째로 삭제했어!
             const container = document.getElementById("doom-container");
             const doomZipUrl = "./doom.zip";
 
-            // 내부 디폴트 엔진 설정을 사용해 바로 둠 실행 시동!
             Dos(container)
                 .run(doomZipUrl)
                 .then((ci) => {
                     doomCiInstance = ci;
+                    doomSession = ci; // 💡 [핵심] 요 한 줄이 들어가야 switchTab에서 일시정지/재생을 시킬 수 있어!
                     console.log("🔥 DOOM 구동 성공! 악마를 물리치러 가십시오.");
                 })
                 .catch((err) => {
