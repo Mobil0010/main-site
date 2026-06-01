@@ -134,7 +134,8 @@
                 <h3 id="schedule-form-title">📅 [날짜 선택] 일정 추가하기 (관리자)</h3>
                 <form onsubmit="saveSchedule(event)" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
                     <input type="text" id="schedule-input" placeholder="새로운 일정을 입력하신 후 추가 버튼을 클릭해 주세요." required style="flex: 1; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 1rem;">
-                    <button type="submit" style="background: #fcc419; color: #111; border: none; padding: 0 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer;">추가</button>
+                    <button type="submit" id="schedule-submit-btn" style="background: #fcc419; color: #111; border: none; padding: 0 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer;">추가</button>
+                    <button type="button" id="schedule-cancel-btn" onclick="cancelEditSchedule()" style="display: none; background: #e9ecef; color: #495057; border: none; padding: 0 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer;">취소</button>
                 </form>
             </div>
 
@@ -213,6 +214,8 @@
 
         const ADMIN_GMAIL = "khm14978@gmail.com"; 
         let currentEditId = null;
+
+        let currentEditScheduleId = null; // 일정 수정 상태를 저장할 변수
         
         let currentDate = new Date(); 
         let allPosts = []; 
@@ -330,16 +333,30 @@
             }
             const scheduleText = document.getElementById("schedule-input").value;
 
-            db.collection("schedules").add({
-                text: scheduleText,
-                date: selectedDateString,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                document.getElementById("schedule-input").value = "";
-                selectDate(selectedDateString); 
-            })
-            .catch(err => alert("일정 저장 실패: " + err.message));
+            if (currentEditScheduleId) {
+                // 💡 [UPDATE] 일정 수정 모드일 때
+                db.collection("schedules").doc(currentEditScheduleId).update({
+                    text: scheduleText
+                })
+                .then(() => {
+                    alert("일정이 수정되었습니다.");
+                    cancelEditSchedule(); // 폼 초기화
+                    selectDate(selectedDateString); 
+                })
+                .catch(err => alert("일정 수정 실패: " + err.message));
+            } else {
+                // [CREATE] 새 일정 추가 모드일 때
+                db.collection("schedules").add({
+                    text: scheduleText,
+                    date: selectedDateString,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .then(() => {
+                    document.getElementById("schedule-input").value = "";
+                    selectDate(selectedDateString); 
+                })
+                .catch(err => alert("일정 저장 실패: " + err.message));
+            }
         }
 
         function deleteSchedule(id) {
@@ -519,7 +536,10 @@
                 resultHTML += filteredSchedules.map(s => `
                     <div class="schedule-card">
                         <h4>• ${s.text}</h4>
-                        <button class="schedule-delete-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteSchedule('${s.id}')">지우기</button>
+                        <div class="admin-actions" style="display: ${isAdmin ? 'flex' : 'none'}; position: absolute; top: 1rem; right: 1.5rem; gap: 0.5rem;">
+                            <button class="edit-btn" style="font-size: 0.85rem;" onclick="startEditSchedule('${s.id}', '${s.text.replace(/'/g, "\\'")}')">수정</button>
+                            <button class="delete-btn" style="font-size: 0.85rem;" onclick="deleteSchedule('${s.id}')">지우기</button>
+                        </div>
                     </div>
                 `).join("");
             }
@@ -532,6 +552,28 @@
             }
 
             detailsContainer.innerHTML = resultHTML;
+        }
+
+        // 💡 일정 수정 모드 시작 함수
+        function startEditSchedule(id, text) {
+            currentEditScheduleId = id;
+            
+            document.getElementById("schedule-input").value = text;
+            document.getElementById("schedule-form-title").innerText = `🔧 일정 수정하기 (관리자)`;
+            document.getElementById("schedule-submit-btn").innerText = "수정";
+            document.getElementById("schedule-cancel-btn").style.display = "inline-block";
+            
+            // 입력창으로 부드럽게 스크롤 이동
+            document.getElementById("admin-schedule-zone").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 💡 일정 수정 취소 및 폼 리셋 함수
+        function cancelEditSchedule() {
+            currentEditScheduleId = null;
+            document.getElementById("schedule-input").value = "";
+            document.getElementById("schedule-form-title").innerText = `📅 [${selectedDateString}] 일정 추가하기 (관리자)`;
+            document.getElementById("schedule-submit-btn").innerText = "추가";
+            document.getElementById("schedule-cancel-btn").style.display = "none";
         }
     </script>
 </body>
