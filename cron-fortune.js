@@ -44,7 +44,7 @@ async function run() {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
             console.log(`[Gemini] 운세 생성 시도 (${attempt}/${MAX_RETRIES})...`);
-            const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const promptText = `너는 아주 친절하고 위트 있는 점술가야... (기존 프롬프트 생략)`;
             
             const geminiRes = await fetch(geminiUrl, {
