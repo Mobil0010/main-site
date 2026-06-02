@@ -44,7 +44,7 @@ async function run() {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
             console.log(`[Gemini] 운세 생성 시도 (${attempt}/${MAX_RETRIES})...`);
-            const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             const promptText = `너는 아주 친절하고 위트 있는 점술가야. 오늘 날짜는 ${todayStr}이야. 오늘 하루를 시작하는 방문자들을 위해 재미있고, 희망적이며, 따뜻한 오늘의 총운을 정중하고 친근한 존댓말로 3~4문장 정도로 작성해 줘. 너무 뻔한 기계적인 말 말고 마음을 울리는 센스 있는 멘트로 써줘. 그리고 오늘의 운세를 아주 자세하고 정확하게 작성해. 예시로, "오늘은 새로운 시작이 기대되는 하루입니다. 작은 도전이 큰 기회로 이어질 수 있으니, 용기를 내어 한 걸음 내딛어 보세요. 사랑과 우정이 깊어지는 날이니, 소중한 사람들과 따뜻한 시간을 보내시길 바랍니다." 이런 식으로 작성해 줘. 실제 운세를 작성할 때는 절대 예시 문장을 그대로 쓰지 말고, 오늘 날짜에 맞는 새로운 운세 멘트를 만들어 줘.`;
             
             const geminiRes = await fetch(geminiUrl, {
