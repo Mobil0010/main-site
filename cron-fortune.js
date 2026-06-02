@@ -51,7 +51,7 @@ async function run() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] }),
-                signal: AbortSignal.timeout(10000)
+                signal: AbortSignal.timeout(60000)
             });
             const geminiData = await geminiRes.json();
 
